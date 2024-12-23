@@ -1,0 +1,48 @@
+body{
+    background:rgb(152, 148, 177);
+}
+
+table{
+    
+    color:white;
+    position:relative;
+    font-size:20px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width:100%;
+
+}
+
+td{
+    background:rgb(25, 25, 73);
+    border: 5px;
+    border-bottom: 5px solid rgb(55, 55, 124);
+    border-left: 5px solid rgb(55, 55, 124);
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+th,td{
+    padding-left:10px;
+    text-align: left;
+    height:50px;
+}
+
+th{
+    background:rgb(125, 125, 184);
+    border: 3px;
+    border-radius: 10px;
+    border-bottom:5px solid rgb(39, 36, 71);
+    border-left: 5px solid rgb(39, 36, 71);
+}
+
+img{
+    position:relative;  
+    height:35px;
+    border-radius: 5px;
+    margin-left:3px;
+    margin-right: 3px;
+    float:right;
+    right:10px;
+}
+
+
