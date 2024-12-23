@@ -134,7 +134,7 @@ fetch(url, {
                 yt_ico.src = "youtube-icon.png";
                 yt.target = "blank_";
                 yt.appendChild(yt_ico);
-                yt.href = "https:youtube.com/@" + media.get(rankList[i].open_id).yt;
+                yt.href = "https://youtube.com/@" + media.get(rankList[i].open_id).yt;
                 
                 links.appendChild(yt);
             }
