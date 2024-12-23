@@ -2,28 +2,23 @@ class Mapper {
     constructor(...initialEntries) {
       this.map = new Map(initialEntries);
     }
-  
-    // Example: Add a key-value pair
+
     set(key, value) {
       this.map.set(key, value);
     }
-  
-    // Example: Get the value associated with a key
+
     get(key) {
       return this.map.get(key);
     }
-  
-    // Example: Check if a key exists
+
     has(key) {
       return this.map.has(key);
     }
-  
-    // Example: Remove a key-value pair
+
     delete(key) {
       this.map.delete(key);
     }
-  
-    // Example: Get the size of the map
+
     size() {
       return this.map.size;
     }
