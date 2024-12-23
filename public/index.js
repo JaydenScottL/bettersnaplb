@@ -78,7 +78,6 @@ fetch(url, {
     return response.json();
 })
 .then(data => {
-    console.log(data);
     var rankList = data.data.at_data_source_output.value.data;
 
     const table = document.createElement('table');
