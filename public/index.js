@@ -60,7 +60,8 @@ const media = new Mapper(
     ["3173190486",{ttv:"cesanasz"}],
     ["962612770",{ttv:"tuccrr"}],
     ["3828390005",{ttv:"revisms",yt:"RevisSnap"}],
-    ["476075167",{ttv:"bynx_plays",yt:"Bynx_Plays"}]
+    ["476075167",{ttv:"bynx_plays",yt:"Bynx_Plays"}],
+    ["1925444495",{ttv:"yowoodymj"}]
 
 
 
