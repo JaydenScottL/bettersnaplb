@@ -1,5 +1,5 @@
 body{
-    background:rgb(152, 148, 177);
+    background:rgb(0, 0, 0);
 }
 
 table{
@@ -7,32 +7,39 @@ table{
     color:white;
     position:relative;
     font-size:20px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     width:100%;
 
 }
 
-td{
-    background:rgb(25, 25, 73);
-    border: 5px;
-    border-bottom: 5px solid rgb(55, 55, 124);
-    border-left: 5px solid rgb(55, 55, 124);
-    overflow: hidden;
-    border-radius: 10px;
-}
+
 
 th,td{
-    padding-left:10px;
+    position:relative;
+    padding-left:15px;
     text-align: left;
     height:50px;
+    margin: 5px;
+    border:1px solid black;
+    
+}
+
+th:first-child{
+    border-left:5px solid rgb(11,11,19);
+}
+
+td{
+    background:rgb(25, 25, 73);
+    overflow: hidden;
+    
+}
+
+td:first-child {
+    border-left: 5px solid rgb(10,10,50);
 }
 
 th{
-    background:rgb(125, 125, 184);
-    border: 3px;
-    border-radius: 10px;
-    border-bottom:5px solid rgb(39, 36, 71);
-    border-left: 5px solid rgb(39, 36, 71);
+    background:rgb(21, 21, 29);
 }
 
 img{

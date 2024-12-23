@@ -62,9 +62,6 @@ const media = new Mapper(
     ["3828390005",{ttv:"revisms",yt:"RevisSnap"}],
     ["476075167",{ttv:"bynx_plays",yt:"Bynx_Plays"}],
     ["1925444495",{ttv:"yowoodymj"}]
-
-
-
     
 );
 
