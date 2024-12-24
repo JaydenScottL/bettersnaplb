@@ -30,7 +30,6 @@ th:first-child{
 
 td{
     background:rgb(25, 25, 73);
-    background-image:linear-gradient(rgb(25, 25, 73),rgb(10,10,50));
     overflow: hidden;
     
 }
