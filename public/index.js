@@ -152,6 +152,8 @@ function buildTable(){
         tdNameSpan.id = 'name_span';
         tdNameSpan.textContent = key;
         tdName.appendChild(tdNameSpan);
+
+        var tempRank = rank;
         
         // Add onclick event to tdName
         tdName.onclick = function() {
@@ -165,7 +167,7 @@ function buildTable(){
             details.appendChild(nameElement);
 
             const rankElement = document.createElement('p');
-            rankElement.textContent = "Rank: " + rank;
+            rankElement.textContent = "Rank: " + tempRank;
             details.appendChild(rankElement);
 
             const pointsElement = document.createElement('p');
@@ -340,9 +342,8 @@ function buildTable(){
 
   
     document.getElementsByTagName("body")[0].appendChild(table);
-
-    
-
 }
+
+
 
 fetchData();
