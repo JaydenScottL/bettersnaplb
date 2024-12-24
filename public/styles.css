@@ -52,4 +52,9 @@ img{
     right:10px;
 }
 
-
+#loading{
+    position:absolute;
+    width:75px;
+    left:0;
+    height:75px;
+}
