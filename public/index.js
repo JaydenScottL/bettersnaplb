@@ -140,6 +140,15 @@ function buildTable(){
 
         const tdRank = document.createElement('td');
         tdRank.textContent = rank;
+
+        if(rank > 1000){
+            const qm = document.createElement("img");
+            qm.src = "question-icon.png";
+            qm.title = "Rank below 1000 is only based on available data and may not be accurate.";
+            tdRank.appendChild(qm);
+
+        }
+
         const tdPoints = document.createElement('td');
         tdPoints.textContent = value.sp;
         const id = document.createElement('td');
