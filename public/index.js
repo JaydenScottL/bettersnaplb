@@ -24,6 +24,18 @@ class Mapper {
     }
 }
 
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+
+const allArguments = {};
+urlParams.forEach((value, key) => {
+  allArguments[key] = value;
+});
+
+if(allArguments.season === undefined){
+    allArguments.season = 0;
+}
+
 const url = "https://www.marvelsnap.com/act/262304/process/exec/v2";
 
 var pids = [
@@ -36,7 +48,7 @@ var pids = [
 
 var requestData = {
     activity_id: "30111426",
-    front_params: "{\"last_season\":\"0\"}",
+    front_params: "{\"last_season\":\"" + allArguments.season.toString() + "\"}",
     login_type: "no_login",
     process_id:"0"
 };
@@ -136,7 +148,86 @@ function buildTable(){
     sortedByKey.forEach((value, key) =>{
         const row = document.createElement('tr');
         const tdName = document.createElement('td');
-        tdName.textContent = key;
+        const tdNameSpan = document.createElement('span');
+        tdNameSpan.id = 'name_span';
+        tdNameSpan.textContent = key;
+        tdName.appendChild(tdNameSpan);
+        
+        // Add onclick event to tdName
+        tdName.onclick = function() {
+            var details = document.getElementById("details");
+            
+            
+            details.innerHTML = ""; // Clear the content of details
+
+            const nameElement = document.createElement('p');
+            nameElement.textContent = "Name: " + key;
+            details.appendChild(nameElement);
+
+            const rankElement = document.createElement('p');
+            rankElement.textContent = "Rank: " + rank;
+            details.appendChild(rankElement);
+
+            const pointsElement = document.createElement('p');
+            pointsElement.textContent = "Snap Points: " + value.sp;
+            details.appendChild(pointsElement);
+
+            const serverIdElement = document.createElement('p');
+            serverIdElement.textContent = "ID: " + value.id; 
+            details.appendChild(serverIdElement);
+
+            const serverElement = document.createElement('p');
+            serverElement.textContent = "Server ID: " + value.server; 
+            details.appendChild(serverElement);
+
+            const roleIdElement = document.createElement('p');
+            roleIdElement.textContent = "Role ID: " + value.role_id; 
+            details.appendChild(roleIdElement);
+
+            if (media.has(value.id)) {
+                const mediaElement = document.createElement('p');
+                mediaElement.textContent = "Media Links:";
+                details.appendChild(mediaElement);
+                
+                const mediaLinks = media.get(value.id);
+                if (mediaLinks.ttv) {
+                    const ttvLinkP = document.createElement('p');
+                    const ttvLink = document.createElement('a');
+                    ttvLink.href = "https://twitch.tv/" + mediaLinks.ttv;
+                    ttvLink.textContent = "https://twitch.tv/" + mediaLinks.ttv;
+                    ttvLinkP.appendChild(ttvLink);
+                    details.appendChild(ttvLinkP);
+                }
+                if (mediaLinks.yt) {
+                    const ytLinkP = document.createElement('p');
+                    const ytLink = document.createElement('a');
+                    ytLink.href = "https://youtube.com/@" + mediaLinks.yt;
+                    ytLink.textContent = "https://youtube.com/@" + mediaLinks.yt;
+                    ytLinkP.appendChild(ytLink);
+                    details.appendChild(ytLinkP);
+                }
+
+                if (mediaLinks.ut) {
+                    const utLinkP = document.createElement('p');
+                    const utLink = document.createElement('a');
+                    utLink.href = "https://snap.untapped.gg/en/profile/" + mediaLinks.ut + "/" + value.role_id;
+                    utLink.textContent = "https://snap.untapped.gg/en/profile/" + mediaLinks.ut + "/" + value.role_id;
+                    utLinkP.appendChild(utLink);
+                    details.appendChild(utLinkP);
+                }
+            }
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Close';
+            closeButton.onclick = function() {
+                details.style.visibility = 'hidden'; // Hide the details popup
+            };
+            details.appendChild(closeButton);
+
+            details.style.left = event.pageX + 'px';
+            details.style.top = event.pageY + 'px';
+            details.style.visibility = 'visible'; // Change true to 'visible'
+            
+        };
 
         const tdRank = document.createElement('td');
         tdRank.textContent = rank;
@@ -167,6 +258,7 @@ function buildTable(){
                 const ttv_ico = document.createElement("img");
                 ttv_ico.src = "twitch-icon.png";
                 ttv.target = "blank_";
+                ttv.title = key + "'s Twitch Channel";
                 ttv.appendChild(ttv_ico);
                 ttv.href = "https://twitch.tv/" + media.get(value.id).ttv;
                 
@@ -178,6 +270,7 @@ function buildTable(){
                 const yt_ico = document.createElement("img");
                 yt_ico.src = "youtube-icon.png";
                 yt.target = "blank_";
+                yt.title = key + "'s Youtube Channel";
                 yt.appendChild(yt_ico);
                 yt.href = "https://youtube.com/@" + media.get(value.id).yt;
                 
@@ -189,6 +282,7 @@ function buildTable(){
                 const ut_ico = document.createElement("img");
                 ut_ico.src = "untapped-icon.png";
                 ut.target = "blank_";
+                ut.title = key + "'s Untapped Profile";
                 ut.appendChild(ut_ico);
                 ut.href = "https://snap.untapped.gg/en/profile/" + media.get(value.id).ut + "/" + value.role_id;
                 

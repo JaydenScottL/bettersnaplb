@@ -3,25 +3,44 @@ body{
 }
 
 table{
-    
+    float:left;
     color:white;
-    position:relative;
     font-size:20px;
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     width:100%;
+    
 
 }
 
+button{
+    background-color: rgb(74, 30, 30);
+    color:white;
+}
 
+#details{
+    position:absolute;
+    background:rgb(21, 21, 29);
+    border-left:5px solid rgb(11,11,19);
+    z-index: 10000;
+    visibility: hidden;
+    color:white;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    padding:10px;
+}
+
+#name_span{
+    position:absolute;
+}
 
 th,td{
-    position:relative;
+    
     padding-left:15px;
     text-align: left;
     height:50px;
-    margin: 5px;
-    border:1px solid black;
     
+    border:1px solid black;
+    max-height: 50px;
+    overflow: hidden;
 }
 
 th:first-child{
@@ -38,6 +57,11 @@ td:first-child {
     border-left: 5px solid rgb(10,10,50);
 }
 
+td:hover{
+    background:rgb(105, 105, 153);
+    border-left:5px solid rgb(85, 85, 112)
+}
+
 th{
     background:rgb(21, 21, 29);
 }
@@ -50,6 +74,13 @@ img{
     margin-right: 3px;
     float:right;
     right:10px;
+    transition: all 0.5s ease-out;
+    border:1px solid transparent;
+}
+
+img:hover{
+    transition: all 0.5s ease-out;
+    border:1px solid white;
 }
 
 #loading{
