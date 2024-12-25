@@ -1,6 +1,7 @@
 # Better Leaderboard for Marvel Snap.
 
 Based on data from https://www.marvelsnap.com/infiniteleaderboard 
+
 Usage of leaderboard API can be seen in index.js
 
 - Allows searching for players with CTRL+F.
