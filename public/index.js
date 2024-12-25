@@ -81,6 +81,7 @@ const media = new Mapper(
     ["1898717762",{ttv:"tlsgsnap",yt:"TLSGMarvelSnap",ut:"8a4e905d-fcbd-4a29-be6a-c251f7e98aca"}],
     ["1406801013",{ttv:"braude"}],
     ["2032457780",{ttv:"jeeeeet13"}],
+    ["3536617735",{ttv:"ni_theal",yt:"Ni_Theal-FR"}]
 );
 
 var lb = new Map();
