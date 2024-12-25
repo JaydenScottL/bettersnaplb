@@ -251,6 +251,40 @@ function buildTable(){
         row.appendChild(tdRank);
         row.appendChild(tdPoints);
 
+        var region = "";
+
+        switch(value.server){
+            case "1005":
+                region = "europe";
+            break;
+
+            case "1006":
+                region = "europe"; // ?
+            break;
+
+            case "1004":
+                region = "oceania"; // ?
+            break;
+
+            case "1002":
+                region = "america";
+            break;
+
+            case "1003":
+                region = "oceania";
+            break;
+
+            case "1001":
+                region = "america";
+            break;
+        }
+
+        const region_ico = document.createElement("img");
+        region_ico.src = region + "-flag.png";
+        region_ico.title = region;
+
+        tdName.appendChild(region_ico);
+
         if(media.has(value.id)){
             const links = document.createElement("span");
 
@@ -297,40 +331,6 @@ function buildTable(){
 
 
         }
-
-        var region = "";
-
-        switch(value.server){
-            case "1005":
-                region = "europe";
-            break;
-
-            case "1006":
-                region = "europe"; // ?
-            break;
-
-            case "1004":
-                region = "oceania"; // ?
-            break;
-
-            case "1002":
-                region = "america";
-            break;
-
-            case "1003":
-                region = "oceania";
-            break;
-
-            case "1001":
-                region = "america";
-            break;
-        }
-
-        const region_ico = document.createElement("img");
-        region_ico.src = region + "-flag.png";
-        region_ico.title = region;
-
-        tdName.appendChild(region_ico);
 
         tbody.appendChild(row);
 
