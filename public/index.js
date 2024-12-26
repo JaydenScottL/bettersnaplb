@@ -84,7 +84,9 @@ const media = new Mapper(
     ["3536617735",{ttv:"ni_theal",yt:"Ni_Theal-FR"}],
     ["2065080966",{ttv:"kingvenom",yt:"KingVenom"}],
     ["2091154312",{ttv:"splaticus"}],
-    ["4270474354",{ttv:"jeffhoogland",yt:"JeffHoogland"}]
+    ["4270474354",{ttv:"jeffhoogland",yt:"JeffHoogland"}],
+    ["2810453979",{yt:"NoLucksGiven"}],
+    ["1190625010",{yt:"snapjudgmentspod",ttv:"pulseglazer"}]
 );
 
 var lb = new Map();
