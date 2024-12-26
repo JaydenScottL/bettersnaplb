@@ -82,7 +82,9 @@ const media = new Mapper(
     ["1406801013",{ttv:"braude"}],
     ["2032457780",{ttv:"jeeeeet13"}],
     ["3536617735",{ttv:"ni_theal",yt:"Ni_Theal-FR"}],
-    ["2065080966",{ttv:"kingvenom",yt:"KingVenom"}]
+    ["2065080966",{ttv:"kingvenom",yt:"KingVenom"}],
+    ["2091154312",{ttv:"splaticus"}],
+    ["4270474354",{ttv:"jeffhoogland",yt:"JeffHoogland"}]
 );
 
 var lb = new Map();
@@ -126,7 +128,7 @@ async function fetchData() {
 }
 
 function buildTable(){
-
+    
     const table = document.createElement('table');
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
@@ -142,6 +144,89 @@ function buildTable(){
     headerRow.appendChild(thRank);
     headerRow.appendChild(thPoints);
     thead.appendChild(headerRow);
+
+    const toggleButton = document.createElement('button');
+    toggleButton.textContent = "Show only Content Creators";
+    let showOnlyLinks = false;
+
+    const imageToggleButton = document.createElement('button');
+    const regions = ["America", "Europe", "Oceania", "Global"];
+    let currentRegionIndex = 3;
+
+    toggleButton.onclick = function() {
+        showOnlyLinks = !showOnlyLinks;
+        currentRegionIndex = 3;
+        imageToggleButton.textContent = `Show Region: ${regions[currentRegionIndex]}`;
+
+        if(showOnlyLinks){
+            toggleButton.textContent = "Show All Players";
+        }else{   
+            toggleButton.textContent = "Show Only Content Creators";
+        }
+
+        const rows = tbody.getElementsByTagName('tr');
+        for (let row of rows) {
+            const nameCell = row.getElementsByTagName('td')[0];
+            if (showOnlyLinks && !nameCell.querySelector('a')) {
+                row.style.display = 'none';
+            } else {
+                row.style.display = '';
+            }
+        }
+    };
+    
+    imageToggleButton.textContent = `Show Region: ${regions[currentRegionIndex]}`;
+    
+    imageToggleButton.onclick = function() {
+
+        toggleButton.textContent = "Show Only Content Creators";
+        showOnlyLinks = false;
+
+        currentRegionIndex = (currentRegionIndex + 1) % regions.length;
+        imageToggleButton.textContent = `Show Region: ${regions[currentRegionIndex]}`;
+        
+        const rows = tbody.getElementsByTagName('tr');
+        for (let row of rows) {
+            const nameCell = row.getElementsByTagName('td')[0];
+            const img = nameCell.querySelector(`img[title="${regions[currentRegionIndex].toLowerCase()}"]`);
+            if (currentRegionIndex < 3 && !img) {
+                row.style.display = 'none';
+            } else {
+                row.style.display = '';
+            }
+        }
+    };
+
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search by Name';
+
+    searchInput.addEventListener('input', function() {
+
+        toggleButton.textContent = "Show Only Content Creators";
+        showOnlyLinks = false;
+        currentRegionIndex = 3;
+        imageToggleButton.textContent = `Show Region: ${regions[currentRegionIndex]}`;
+
+
+        const filter = searchInput.value.toLowerCase();
+        const rows = tbody.getElementsByTagName('tr');
+        for (let row of rows) {
+            const nameCell = row.getElementsByTagName('td')[0];
+            if (nameCell) {
+                const nameText = nameCell.textContent || nameCell.innerText;
+                row.style.display = nameText.toLowerCase().includes(filter) ? '' : 'none';
+            }
+        }
+    });
+
+    thName.appendChild(searchInput);
+    
+
+    thName.appendChild(imageToggleButton);
+
+    thName.appendChild(toggleButton);
+
     
     const sortedByKey = new Map([...lb.entries()].sort((a, b) => b[1].sp - a[1].sp));
 

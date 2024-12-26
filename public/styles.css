@@ -13,8 +13,15 @@ table{
 }
 
 button{
-    background-color: rgb(74, 30, 30);
-    color:white;
+    padding:5px;
+    margin-right: 10px;
+    float:right;
+    
+}
+
+input{
+    padding:5px;
+    float :right;
 }
 
 #details{
