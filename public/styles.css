@@ -12,17 +12,49 @@ table{
 
 }
 
-button{
+
+button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 10px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     padding:5px;
     margin-right: 10px;
     float:right;
-    
+}
+  
+button:hover {
+    background-color: #3e8e41; 
 }
 
 input{
-    padding:5px;
+    border:none;
+    padding: 15px 32px;
+    background-color: #4CAF50;
     float :right;
+    
+    color:white;
+    padding:5px;
+    margin: 4px 2px;
     margin-right: 10px;
+    font-size: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+::placeholder {
+    color: rgb(69, 105, 72);
+    opacity: 1; /* Firefox */
+}
+  
+::-ms-input-placeholder { /* Edge 12 -18 */
+    color: rgb(69, 105, 72);
 }
 
 #details{
