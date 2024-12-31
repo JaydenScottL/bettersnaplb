@@ -112,7 +112,8 @@ async function fetchData() {
         const rankList = data.data.at_data_source_output.value.data;
     
         for (let i = 0; i < rankList.length; i++) {
-            lb.set(rankList[i].indicator_0, {
+            lb.set(rankList[i].open_id, {
+            name: rankList[i].indicator_0,
             sp: rankList[i].score1,
             server: rankList[i].server_id,
             id: rankList[i].open_id,
@@ -239,7 +240,7 @@ function buildTable(){
         const tdName = document.createElement('td');
         const tdNameSpan = document.createElement('span');
         tdNameSpan.id = 'name_span';
-        tdNameSpan.textContent = key;
+        tdNameSpan.textContent = value.name;
         tdName.appendChild(tdNameSpan);
 
         var tempRank = rank;
@@ -252,7 +253,7 @@ function buildTable(){
             details.innerHTML = ""; // Clear the content of details
 
             const nameElement = document.createElement('p');
-            nameElement.textContent = "Name: " + key;
+            nameElement.textContent = "Name: " + value.name;
             details.appendChild(nameElement);
 
             const rankElement = document.createElement('p');
@@ -383,7 +384,7 @@ function buildTable(){
                 const ttv_ico = document.createElement("img");
                 ttv_ico.src = "twitch-icon.png";
                 ttv.target = "blank_";
-                ttv.title = key + "'s Twitch Channel";
+                ttv.title = value.name + "'s Twitch Channel";
                 ttv.appendChild(ttv_ico);
                 ttv.href = "https://twitch.tv/" + media.get(value.id).ttv;
                 
@@ -395,7 +396,7 @@ function buildTable(){
                 const yt_ico = document.createElement("img");
                 yt_ico.src = "youtube-icon.png";
                 yt.target = "blank_";
-                yt.title = key + "'s Youtube Channel";
+                yt.title = value.name + "'s Youtube Channel";
                 yt.appendChild(yt_ico);
                 yt.href = "https://youtube.com/@" + media.get(value.id).yt;
                 
@@ -407,7 +408,7 @@ function buildTable(){
                 const ut_ico = document.createElement("img");
                 ut_ico.src = "untapped-icon.png";
                 ut.target = "blank_";
-                ut.title = key + "'s Untapped Profile";
+                ut.title = value.name + "'s Untapped Profile";
                 ut.appendChild(ut_ico);
                 ut.href = "https://snap.untapped.gg/en/profile/" + media.get(value.id).ut + "/" + value.role_id;
                 
