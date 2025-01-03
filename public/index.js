@@ -236,6 +236,11 @@ function buildTable(){
     var rank = 1;
 
     sortedByKey.forEach((value, key) =>{
+
+        if(rank > 1000){
+            return;
+        }
+
         const row = document.createElement('tr');
         const tdName = document.createElement('td');
         const tdNameSpan = document.createElement('span');
@@ -327,7 +332,7 @@ function buildTable(){
         if(rank > 1000){
             const qm = document.createElement("img");
             qm.src = "question-icon.png";
-            qm.title = "Rank below 1000 is only based on available data and may not be accurate.";
+            qm.title = "Rank beyond 1000 is only based on available data and may not be accurate.";
             tdRank.appendChild(qm);
 
         }
