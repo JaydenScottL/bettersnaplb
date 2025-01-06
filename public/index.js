@@ -278,12 +278,20 @@ function buildTable(){
         // Add onclick event to tdName
         tdName.addEventListener('click',(event) => {
             
-            if (!(event.target === tdName)) {
-                return;
-            }
+            
+
+            
 
             var details = document.getElementById("details");
             
+            if(details.style.visibility === "visible"){
+                details.style.visibility = "hidden";
+                return;
+            }
+
+            if (!(event.target === tdName)) {
+                return;
+            }
             
             details.innerHTML = ""; // Clear the content of details
 
