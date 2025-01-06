@@ -15,7 +15,7 @@ table{
 
 
 button {
-    background-color: #4CAF50; /* Green */
+    background-color: rgb(25, 25, 73);
     border: none;
     color: white;
     padding: 15px 32px;
@@ -32,13 +32,13 @@ button {
 }
   
 button:hover {
-    background-color: #3e8e41; 
+    background-color: rgb(105, 105, 153);
 }
 
 input{
     border:none;
     padding: 15px 32px;
-    background-color: #4CAF50;
+    background-color: rgb(25, 25, 73);;
     float :right;
     
     color:white;
@@ -50,12 +50,12 @@ input{
 }
 
 ::placeholder {
-    color: rgb(69, 105, 72);
+    color: rgb(169, 169, 189);
     opacity: 1; /* Firefox */
 }
   
 ::-ms-input-placeholder { /* Edge 12 -18 */
-    color: rgb(69, 105, 72);
+    color: rgb(169, 169, 189);
 }
 
 #details{
