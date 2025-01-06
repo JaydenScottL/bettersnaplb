@@ -276,7 +276,12 @@ function buildTable(){
         var tempRank = rank;
         
         // Add onclick event to tdName
-        tdName.onclick = function() {
+        tdName.addEventListener('click',(event) => {
+            
+            if (!(event.target === tdName)) {
+                return;
+            }
+
             var details = document.getElementById("details");
             
             
@@ -349,7 +354,7 @@ function buildTable(){
             details.style.top = event.pageY + 'px';
             details.style.visibility = 'visible'; // Change true to 'visible'
             
-        };
+        });
 
         const tdRank = document.createElement('td');
         tdRank.textContent = rank;
