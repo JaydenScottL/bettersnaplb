@@ -53,11 +53,14 @@ var requestData = {
     process_id:"0"
 };
 
+
 const headers = {
     "Content-Type": "application/json",
 };
 
-const media = new Mapper(
+var media = new Mapper();
+
+/*const media = new Mapper(
     ["2309640753",{ttv:"sizer2654",yt:"sizer2654",ut:"bcd75866-aa12-488e-8ed7-65349ec163cf"}],
     ["3187018143",{ttv:"roramplays",yt:"RoramPlays"}],
     ["139040794",{ttv:"huskypuppies35"}],
@@ -86,8 +89,26 @@ const media = new Mapper(
     ["2091154312",{ttv:"splaticus"}],
     ["4270474354",{ttv:"jeffhoogland",yt:"JeffHoogland"}],
     ["2810453979",{yt:"NoLucksGiven"}],
-    ["1190625010",{yt:"snapjudgmentspod",ttv:"pulseglazer"}]
-);
+    ["1190625010",{yt:"snapjudgmentspod",ttv:"pulseglazer"}],
+    ["1411592087",{yt:"mayorpluto"}]
+);*/
+
+async function fetchMedia(){
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/jaydenscottl/bettersnaplb/main/media.txt');
+        const data = await response.json();
+        console.log(data.toString());
+
+        for(const key in data){
+            if(data.hasOwnProperty(key)){
+                media.set(key,data[key]);
+            }
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
 
 var lb = new Map();
 
@@ -122,7 +143,7 @@ async function fetchData() {
         }
 
         } catch (error) {
-        console.error("Error:", error);
+            console.error("Error:", error);
         }
     }
     
@@ -451,5 +472,5 @@ function buildTable(){
 }
 
 
-
+fetchMedia();
 fetchData();
