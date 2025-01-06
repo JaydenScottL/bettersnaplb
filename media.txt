@@ -1,30 +1,111 @@
-{["2309640753",{ttv:"sizer2654",yt:"sizer2654",ut:"bcd75866-aa12-488e-8ed7-65349ec163cf"}],
-    ["3187018143",{ttv:"roramplays",yt:"RoramPlays"}],
-    ["139040794",{ttv:"huskypuppies35"}],
-    ["816264526",{ttv:"safetyblade"}],
-    ["1995681132",{ttv:"evazord",yt:"Evazord"}],
-    ["3067847376",{ttv:"derajn",yt:"derajn",ut:"596a1089-d904-4346-a5cb-14b0412c8c73"}],
-    ["2590104629",{ttv:"dekkster",yt:"DekksterSnap",ut:"cfb1628e-902e-4132-ad8f-dddb9be39698"}],
-    ["885105018",{ttv:"zombiezgonomnom",yt:"ZombiesGoNomNom"}],
-    ["1258972432",{ttv:"andrevar14"}],
-    ["3775516060",{ttv:"spyro_za",yt:"SpyroZA"}],
-    ["295294695",{ttv:"kmbestms",yt:"KMBestInASnap"}],
-    ["3443758727",{ttv:"crimeafoot"}],
-    ["4135298364",{ttv:"gravebees"}],
-    ["1982188250",{ttv:"kx4nsnap"}],
-    ["3173190486",{ttv:"cesanasz"}],
-    ["962612770",{ttv:"tuccrr"}],
-    ["3828390005",{ttv:"revisms",yt:"RevisSnap"}],
-    ["476075167",{ttv:"bynx_plays",yt:"Bynx_Plays"}],
-    ["1925444495",{ttv:"yowoodymj"}],
-    ["4017919401",{ut:"8025b655-b5d7-45c4-8472-b1e7376bc3ea"}],
-    ["1898717762",{ttv:"tlsgsnap",yt:"TLSGMarvelSnap",ut:"8a4e905d-fcbd-4a29-be6a-c251f7e98aca"}],
-    ["1406801013",{ttv:"braude"}],
-    ["2032457780",{ttv:"jeeeeet13"}],
-    ["3536617735",{ttv:"ni_theal",yt:"Ni_Theal-FR"}],
-    ["2065080966",{ttv:"kingvenom",yt:"KingVenom"}],
-    ["2091154312",{ttv:"splaticus"}],
-    ["4270474354",{ttv:"jeffhoogland",yt:"JeffHoogland"}],
-    ["2810453979",{yt:"NoLucksGiven"}],
-    ["1190625010",{yt:"snapjudgmentspod",ttv:"pulseglazer"}],
-    ["1411592087",{yt:"mayorpluto"}]}
+{
+  "139040794": {
+    "ttv": "huskypuppies35"
+  },
+  "295294695": {
+    "ttv": "kmbestms",
+    "yt": "KMBestInASnap"
+  },
+  "476075167": {
+    "ttv": "bynx_plays",
+    "yt": "Bynx_Plays"
+  },
+  "816264526": {
+    "ttv": "safetyblade"
+  },
+  "885105018": {
+    "ttv": "zombiezgonomnom",
+    "yt": "ZombiesGoNomNom"
+  },
+  "962612770": {
+    "ttv": "tuccrr"
+  },
+  "1190625010": {
+    "yt": "snapjudgmentspod",
+    "ttv": "pulseglazer"
+  },
+  "1258972432": {
+    "ttv": "andrevar14"
+  },
+  "1406801013": {
+    "ttv": "braude"
+  },
+  "1411592087": {
+    "yt": "mayorpluto"
+  },
+  "1898717762": {
+    "ttv": "tlsgsnap",
+    "yt": "TLSGMarvelSnap",
+    "ut": "8a4e905d-fcbd-4a29-be6a-c251f7e98aca"
+  },
+  "1925444495": {
+    "ttv": "yowoodymj"
+  },
+  "1982188250": {
+    "ttv": "kx4nsnap"
+  },
+  "1995681132": {
+    "ttv": "evazord",
+    "yt": "Evazord"
+  },
+  "2032457780": {
+    "ttv": "jeeeeet13"
+  },
+  "2065080966": {
+    "ttv": "kingvenom",
+    "yt": "KingVenom"
+  },
+  "2091154312": {
+    "ttv": "splaticus"
+  },
+  "2309640753": {
+    "ttv": "sizer2654",
+    "yt": "sizer2654",
+    "ut": "bcd75866-aa12-488e-8ed7-65349ec163cf"
+  },
+  "2590104629": {
+    "ttv": "dekkster",
+    "yt": "DekksterSnap",
+    "ut": "cfb1628e-902e-4132-ad8f-dddb9be39698"
+  },
+  "2810453979": {
+    "yt": "NoLucksGiven"
+  },
+  "3067847376": {
+    "ttv": "derajn",
+    "yt": "derajn",
+    "ut": "596a1089-d904-4346-a5cb-14b0412c8c73"
+  },
+  "3173190486": {
+    "ttv": "cesanasz"
+  },
+  "3187018143": {
+    "ttv": "roramplays",
+    "yt": "RoramPlays"
+  },
+  "3443758727": {
+    "ttv": "crimeafoot"
+  },
+  "3536617735": {
+    "ttv": "ni_theal",
+    "yt": "Ni_Theal-FR"
+  },
+  "3775516060": {
+    "ttv": "spyro_za",
+    "yt": "SpyroZA"
+  },
+  "3828390005": {
+    "ttv": "revisms",
+    "yt": "RevisSnap"
+  },
+  "4017919401": {
+    "ut": "8025b655-b5d7-45c4-8472-b1e7376bc3ea"
+  },
+  "4135298364": {
+    "ttv": "gravebees"
+  },
+  "4270474354": {
+    "ttv": "jeffhoogland",
+    "yt": "JeffHoogland"
+  }
+}
