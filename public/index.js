@@ -97,7 +97,6 @@ async function fetchMedia(){
     try {
         const response = await fetch('https://raw.githubusercontent.com/jaydenscottl/bettersnaplb/main/media.txt');
         const data = await response.json();
-        console.log(data.toString());
 
         for(const key in data){
             if(data.hasOwnProperty(key)){
@@ -173,7 +172,7 @@ function buildTable(){
     thead.appendChild(headerRow);
 
     const toggleButton = document.createElement('button');
-    toggleButton.textContent = "Show only Content Creators";
+    toggleButton.textContent = "Show Only Content Creators";
     let showOnlyLinks = false;
 
     const imageToggleButton = document.createElement('button');
