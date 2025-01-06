@@ -143,9 +143,12 @@ function buildTable(){
     thRank.textContent = "Rank";
     const thPoints = document.createElement('th');
     thPoints.textContent = "Snap Points";
+    //const thRegion = document.createElement('th');
+    //thRegion.textContent = "Region";
     headerRow.appendChild(thName);
     headerRow.appendChild(thRank);
     headerRow.appendChild(thPoints);
+    //headerRow.appendChild(thRegion);
     thead.appendChild(headerRow);
 
     const toggleButton = document.createElement('button');
@@ -198,6 +201,8 @@ function buildTable(){
                 row.style.display = '';
             }
         }
+
+        console.log("Number of top 1k players in " + regions[currentRegionIndex] + " region:", Array.from(tbody.getElementsByTagName('tr')).filter(row => row.style.display !== 'none').length);
     };
 
     const searchInput = document.createElement('input');
@@ -380,6 +385,10 @@ function buildTable(){
 
         tdName.appendChild(region_ico);
 
+        //const tdRegion = document.createElement("td");
+        //tdRegion.textContent = region;
+        //row.appendChild(tdRegion);
+
         if(media.has(value.id)){
             const links = document.createElement("span");
 
@@ -437,6 +446,8 @@ function buildTable(){
 
   
     document.getElementsByTagName("body")[0].appendChild(table);
+
+    
 }
 
 
