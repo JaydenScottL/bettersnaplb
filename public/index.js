@@ -196,7 +196,12 @@ function buildTable(){
             if (showOnlyLinks && !nameCell.querySelector('a')) {
                 row.style.display = 'none';
             } else {
-                row.style.display = '';
+                
+                if(nameCell.innerHTML.includes("untapped") && nameCell.getElementsByTagName('a').length == 1){
+                    row.style.display = 'none';
+                }else{             
+                    row.style.display = '';
+                }
             }
         }
     };
@@ -275,13 +280,8 @@ function buildTable(){
 
         var tempRank = rank;
         
-        // Add onclick event to tdName
         tdName.addEventListener('click',(event) => {
             
-            
-
-            
-
             var details = document.getElementById("details");
             
             if(details.style.visibility === "visible"){
@@ -293,7 +293,7 @@ function buildTable(){
                 return;
             }
             
-            details.innerHTML = ""; // Clear the content of details
+            details.innerHTML = ""; 
 
             const nameElement = document.createElement('p');
             nameElement.textContent = "Name: " + value.name;
@@ -354,13 +354,13 @@ function buildTable(){
             const closeButton = document.createElement('button');
             closeButton.textContent = 'Close';
             closeButton.onclick = function() {
-                details.style.visibility = 'hidden'; // Hide the details popup
+                details.style.visibility = 'hidden'; 
             };
             details.appendChild(closeButton);
 
             details.style.left = event.pageX + 'px';
             details.style.top = event.pageY + 'px';
-            details.style.visibility = 'visible'; // Change true to 'visible'
+            details.style.visibility = 'visible'; 
             
         });
 
