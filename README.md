@@ -6,8 +6,8 @@ Live site: https://jaydenscottl.github.io/bettersnaplb/public/index.html
 
 Usage of leaderboard API can be seen in index.js
 
-- Allows searching for players with CTRL+F.
-- Combines available regions for more accurate global ranking (until about rank 1.5k+).
+- Allows searching for players
+- Combines available regions for more accurate global ranking
 - Media links: Twitch, Youtube, Untapped shown next to rank for content creators. DM @duplicis on Discord if you are rank 1k minimum and wish for your links to be added.
 
 
