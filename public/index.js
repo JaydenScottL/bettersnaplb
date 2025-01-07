@@ -182,8 +182,13 @@ function buildTable(){
     const previousSeasonLink = document.createElement('a')
     const previousSeasonButton = document.createElement('button');
     previousSeasonLink.appendChild(previousSeasonButton);
-    previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=1";
-    previousSeasonButton.textContent = "Previous Season";
+    if(allArguments.season == 0){
+        previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=1";
+        previousSeasonButton.textContent = "View Previous Season";
+    }else{
+        previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=0";
+        previousSeasonButton.textContent = "View Current Season";
+    }
 
     toggleButton.onclick = function() {
         showOnlyLinks = !showOnlyLinks;
