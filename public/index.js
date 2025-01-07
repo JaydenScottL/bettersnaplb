@@ -179,6 +179,12 @@ function buildTable(){
     const regions = ["America", "Europe", "Oceania", "Global"];
     let currentRegionIndex = 3;
 
+    const previousSeasonLink = document.createElement('a')
+    const previousSeasonButton = document.createElement('button');
+    previousSeasonLink.appendChild(previousSeasonButton);
+    previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=1";
+    previousSeasonButton.textContent = "Previous Season";
+
     toggleButton.onclick = function() {
         showOnlyLinks = !showOnlyLinks;
         currentRegionIndex = 3;
@@ -255,10 +261,11 @@ function buildTable(){
 
     thName.appendChild(searchInput);
     
-
     thName.appendChild(imageToggleButton);
 
     thName.appendChild(toggleButton);
+
+    thName.appendChild(previousSeasonLink);
 
     
     const sortedByKey = new Map([...lb.entries()].sort((a, b) => b[1].sp - a[1].sp));
