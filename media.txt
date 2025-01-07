@@ -21,7 +21,8 @@
   },
   "962612770": {
     "ttv": "tuccrr",
-    "ut": "1127c2e2-016e-4744-acea-882d012fa8a9"
+    "ut": "1127c2e2-016e-4744-acea-882d012fa8a9",
+    "yt": "tuccrr"
   },
   "1190625010": {
     "yt": "snapjudgmentspod",
@@ -121,7 +122,8 @@
     "ut": "fb01ac58-7df3-45f9-abe0-85e33a01ee69"
   },
   "2063088781":{
-    "ttv":"owiiiii"
+    "ttv":"owiiiii",
+    "yt":"OwiCast"
   },
   "3237761533":{
     "ttv":"crazy_im"
