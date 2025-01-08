@@ -59,6 +59,7 @@ const headers = {
 };
 
 var media = new Mapper();
+var season_data = new Mapper();
 
 /*const media = new Mapper(
     ["2309640753",{ttv:"sizer2654",yt:"sizer2654",ut:"bcd75866-aa12-488e-8ed7-65349ec163cf"}],
@@ -109,6 +110,23 @@ async function fetchMedia(){
     }
 }
 
+async function fetchBadgeData(){
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/jaydenscottl/bettersnaplb/main/season_data/season_data.txt');
+        const data = await response.json();
+
+        for(const key in data){
+            if(data.hasOwnProperty(key)){
+                console.log(data[key][0]);
+                season_data.set(data[key][0],data[key][1]);
+            }
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
 var lb = new Map();
 
 var loading_icon = document.getElementById("loading");
@@ -149,6 +167,21 @@ async function fetchData() {
     document.getElementsByTagName("body")[0].removeChild(loading_icon);
     buildTable();
 }
+
+/*function downloadMapObject(mapObj, fileName) {
+    // Convert the map object to a JSON string
+    const mapJson = JSON.stringify(mapObj);
+  
+    // Create a hidden anchor element
+    const link = document.createElement('a');
+    link.href = `data:text/json;charset=utf-8,${encodeURIComponent(mapJson)}`;
+    link.download = fileName || 'map.json';
+  
+    // Trigger a click event to initiate the download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }*/
 
 function buildTable(){
     
@@ -233,12 +266,13 @@ function buildTable(){
             const img = nameCell.querySelector(`img[title="${regions[currentRegionIndex].toLowerCase()}"]`);
             if (currentRegionIndex < 3 && !img) {
                 row.style.display = 'none';
+                
             } else {
                 row.style.display = '';
             }
         }
 
-        console.log("Number of top 1k players in " + regions[currentRegionIndex] + " region:", Array.from(tbody.getElementsByTagName('tr')).filter(row => row.style.display !== 'none').length);
+        //console.log("Number of top 1k players in " + regions[currentRegionIndex] + " region:", Array.from(tbody.getElementsByTagName('tr')).filter(row => row.style.display !== 'none').length);
     };
 
     const searchInput = document.createElement('input');
@@ -274,6 +308,11 @@ function buildTable(){
 
     
     const sortedByKey = new Map([...lb.entries()].sort((a, b) => b[1].sp - a[1].sp));
+
+    /*table.onclick = function(){
+        console.log(Array.from(lb));
+        downloadMapObject(Array.from(lb),"output.txt");
+    }*/
 
     var rank = 1;
 
@@ -378,6 +417,7 @@ function buildTable(){
 
         const tdRank = document.createElement('td');
         tdRank.textContent = rank;
+        value.rank = rank.toString();
 
         if(rank > 1000){
             const qm = document.createElement("img");
@@ -472,14 +512,24 @@ function buildTable(){
                 ut.href = "https://snap.untapped.gg/en/profile/" + media.get(value.id).ut + "/" + value.role_id;
                 
                 links.appendChild(ut);
-            }
-
-            
+            }    
 
             tdName.appendChild(links);
 
 
         }
+
+        /*if(season_data.get(value.id) !== undefined){
+            //const ps = document.createElement("span");
+            //ps.className = "rankSpan";
+            //ps.title = "Previous Season";
+            const psImg = document.createElement("img");
+            psImg.src = "previous_season.png";
+            //ps.appendChild(psImg);
+            console.log(season_data.get(value.id));
+            psImg.textContent = season_data.get(value.id).rank;
+            tdName.appendChild(psImg);
+        }*/
 
         tbody.appendChild(row);
 
@@ -497,4 +547,5 @@ function buildTable(){
 
 
 fetchMedia();
+//fetchBadgeData();
 fetchData();
