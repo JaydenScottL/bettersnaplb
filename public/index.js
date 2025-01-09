@@ -156,7 +156,7 @@ async function fetchData() {
             server: rankList[i].server_id,
             id: rankList[i].open_id,
             role_id: rankList[i].role_id,
-            score2: rankList[i].score2
+            timestamp: rankList[i].score2
             });
         }
 
@@ -363,9 +363,9 @@ function buildTable(){
             serverIdElement.textContent = "ID: " + value.id; 
             details.appendChild(serverIdElement);
 
-            const score2Element = document.createElement('p');
-            score2Element.textContent = "score2 (unknown purpose): " + value.score2;
-            details.appendChild(score2Element);
+            const tsElement = document.createElement('p');
+            tsElement.textContent = "Timestamp: " + value.timestamp;
+            details.appendChild(tsElement);
 
             const serverElement = document.createElement('p');
             serverElement.textContent = "Server ID: " + value.server; 
