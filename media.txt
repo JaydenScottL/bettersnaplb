@@ -154,5 +154,9 @@
   },
   "626848131":{
     "ttv":"buttsquad888"
+  },
+  "377871973":{
+    "ttv":"parrymanilow",
+    "yt":"parrymanilow"
   }
 }
