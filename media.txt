@@ -124,7 +124,7 @@
   },
   "2063088781":{
     "ttv":"owiiiii",
-    "yt":"OwiLaDétente"
+    "yt":"OwiChill"
   },
   "3237761533":{
     "ttv":"crazy_im"
