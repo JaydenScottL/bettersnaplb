@@ -96,7 +96,7 @@
   },
   "3536617735": {
     "ttv": "ni_theal",
-    "yt": "Ni_Theal-FR"
+    "yt": "Ni_theal"
   },
   "3775516060": {
     "ttv": "spyro_za",
