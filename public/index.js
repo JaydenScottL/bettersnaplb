@@ -128,6 +128,9 @@ async function fetchBadgeData(){
 }
 
 var lb = new Map();
+var na_lb = new Map();
+var eu_lb = new Map();
+var oc_lb = new Map();
 
 var loading_icon = document.getElementById("loading");
 
@@ -148,6 +151,7 @@ async function fetchData() {
     
         const data = await response.json();
         const rankList = data.data.at_data_source_output.value.data;
+        
     
         for (let i = 0; i < rankList.length; i++) {
             lb.set(rankList[i].open_id, {
@@ -158,8 +162,83 @@ async function fetchData() {
             role_id: rankList[i].role_id,
             timestamp: rankList[i].score2
             });
+
+            /*switch(rankList[i].server_id){
+                case "1005":
+                    region = "europe";
+                    eu_lb.set(rankList[i].open_id, {
+                    name: rankList[i].indicator_0,
+                    sp: rankList[i].score1,
+                    server: rankList[i].server_id,
+                    id: rankList[i].open_id,
+                    role_id: rankList[i].role_id,
+                    timestamp: rankList[i].score2
+                    });
+                break;
+    
+                case "1006":
+                    region = "europe"; // ?
+                    eu_lb.set(rankList[i].open_id, {
+                    name: rankList[i].indicator_0,
+                    sp: rankList[i].score1,
+                    server: rankList[i].server_id,
+                    id: rankList[i].open_id,
+                    role_id: rankList[i].role_id,
+                    timestamp: rankList[i].score2
+                    });
+                break;
+    
+                case "1004":
+                    region = "oceania"; // ?
+                    oc_lb.set(rankList[i].open_id, {
+                    name: rankList[i].indicator_0,
+                    sp: rankList[i].score1,
+                    server: rankList[i].server_id,
+                    id: rankList[i].open_id,
+                    role_id: rankList[i].role_id,
+                    timestamp: rankList[i].score2
+                    });
+                break;
+    
+                case "1002":
+                    na_lb.set(rankList[i].open_id, {
+                    name: rankList[i].indicator_0,
+                    sp: rankList[i].score1,
+                    server: rankList[i].server_id,
+                    id: rankList[i].open_id,
+                    role_id: rankList[i].role_id,
+                    timestamp: rankList[i].score2
+                    });
+                break;
+    
+                case "1003":
+                    oc_lb.set(rankList[i].open_id, {
+                    name: rankList[i].indicator_0,
+                    sp: rankList[i].score1,
+                    server: rankList[i].server_id,
+                    id: rankList[i].open_id,
+                    role_id: rankList[i].role_id,
+                    timestamp: rankList[i].score2
+                    });
+                break;
+    
+                case "1001":
+                    na_lb.set(rankList[i].open_id, {
+                    name: rankList[i].indicator_0,
+                    sp: rankList[i].score1,
+                    server: rankList[i].server_id,
+                    id: rankList[i].open_id,
+                    role_id: rankList[i].role_id,
+                    timestamp: rankList[i].score2
+                    });
+                break;
+            }*/
+            
+            //console.log(`Name: ${rankList[i].indicator_0}, Rank: ${i + 1} ID:${rankList[i].open_id}, RoleID: ${rankList[i].role_id}`);
+
         }
 
+        
         } catch (error) {
             console.error("Error:", error);
         }
@@ -309,11 +388,29 @@ function buildTable(){
 
     
     const sortedByKey = new Map([...lb.entries()].sort((a, b) => b[1].sp - a[1].sp));
-
-    /*table.onclick = function(){
+    
+    /*
+    table.onclick = function(){
         console.log(Array.from(lb));
         downloadMapObject(Array.from(lb),"output.txt");
     }*/
+
+    createTable(sortedByKey,tbody);
+    
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+
+  
+    document.getElementsByTagName("body")[0].appendChild(table);
+
+    
+}
+
+function createTable(sortedByKey,tbody){
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.lastChild);
+    }
 
     var rank = 1;
 
@@ -517,7 +614,18 @@ function buildTable(){
                 ut.href = "https://snap.untapped.gg/en/profile/" + media.get(value.id).ut + "/" + value.role_id;
                 
                 links.appendChild(ut);
-            }    
+            } 
+            
+            if(media.get(value.id).gg2025 !== undefined){
+                const gg2025 = document.createElement("a");
+                const gg2025_ico = document.createElement("img");
+                gg2025_ico.src = "goldengauntlet2025.png";
+                gg2025.target = "blank_";
+                gg2025.title = "2025 Golden Gauntlet Winner";
+                gg2025.appendChild(gg2025_ico);
+                gg2025.href = "https://marvelsnapzone.com/marvel-snap-golden-gauntlet/";
+                links.appendChild(gg2025);
+            }
 
             tdName.appendChild(links);
 
@@ -540,16 +648,7 @@ function buildTable(){
 
         rank++;
     });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-
-  
-    document.getElementsByTagName("body")[0].appendChild(table);
-
-    
 }
-
 
 fetchMedia();
 //fetchBadgeData();
