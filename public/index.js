@@ -319,7 +319,7 @@ function buildTable(){
             const nameCell = row.getElementsByTagName('td')[0];
             if (showOnlyLinks && !nameCell.querySelector('a')) {
                 row.style.display = 'none';
-            } else {
+            } else if(showOnlyLinks){
                 
                 if(nameCell.innerHTML.includes("untapped") && nameCell.getElementsByTagName('a').length == 1){
                     row.style.display = 'none';
@@ -328,6 +328,8 @@ function buildTable(){
                 }else{             
                     row.style.display = '';
                 }
+            }else{
+                row.style.display = '';
             }
         }
     };
