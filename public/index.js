@@ -323,6 +323,8 @@ function buildTable(){
                 
                 if(nameCell.innerHTML.includes("untapped") && nameCell.getElementsByTagName('a').length == 1){
                     row.style.display = 'none';
+                }else if(nameCell.innerHTML.includes("goldengauntlet") && nameCell.getElementsByTagName('a').length == 1){
+                    row.style.display = 'none';
                 }else{             
                     row.style.display = '';
                 }
