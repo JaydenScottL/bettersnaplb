@@ -234,7 +234,7 @@ async function fetchData() {
                 break;
             }*/
             
-            //console.log(`Name: ${rankList[i].indicator_0}, Rank: ${i + 1} ID:${rankList[i].open_id}, RoleID: ${rankList[i].role_id}`);
+            console.log(`Name: ${rankList[i].indicator_0}, Rank: ${i + 1} ID:${rankList[i].open_id}, RoleID: ${rankList[i].role_id}`);
 
         }
 
@@ -248,7 +248,7 @@ async function fetchData() {
     buildTable();
 }
 
-/*function downloadMapObject(mapObj, fileName) {
+function downloadMapObject(mapObj, fileName) {
     // Convert the map object to a JSON string
     const mapJson = JSON.stringify(mapObj);
   
@@ -261,7 +261,7 @@ async function fetchData() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }*/
+  }
 
 function buildTable(){
     
@@ -393,8 +393,8 @@ function buildTable(){
     
     const sortedByKey = new Map([...lb.entries()].sort((a, b) => b[1].sp - a[1].sp));
     
-    /*
-    table.onclick = function(){
+    
+    /*table.onclick = function(){
         console.log(Array.from(lb));
         downloadMapObject(Array.from(lb),"output.txt");
     }*/
@@ -412,6 +412,19 @@ function buildTable(){
 }
 
 function createTable(sortedByKey,tbody){
+
+    if(sortedByKey.size == 0){
+        const apiErrorImage = document.createElement("img");
+        apiErrorImage.position = "relative";
+        apiErrorImage.src = "ApiError.png";
+        apiErrorImage.title = "Empty array received.";
+        apiErrorImage.style.width = "50%";
+        apiErrorImage.style.height = "50%";
+        apiErrorImage.style.paddingLeft = "5px";
+        apiErrorImage.style.paddingTop = "15px";
+        tbody.appendChild(apiErrorImage);
+        return;
+    }
     while (tbody.firstChild) {
         tbody.removeChild(tbody.lastChild);
     }
@@ -572,6 +585,7 @@ function createTable(sortedByKey,tbody){
 
         const region_ico = document.createElement("img");
         region_ico.src = region + "-flag.png";
+        region_ico.id = "icon";
         region_ico.title = region;
 
         tdName.appendChild(region_ico);
@@ -587,6 +601,7 @@ function createTable(sortedByKey,tbody){
                 
                 const ttv = document.createElement("a");
                 const ttv_ico = document.createElement("img");
+                ttv_ico.id = "icon";
                 ttv_ico.src = "twitch-icon.png";
                 ttv.target = "blank_";
                 ttv.title = value.name + "'s Twitch Channel";
@@ -599,6 +614,7 @@ function createTable(sortedByKey,tbody){
             if(media.get(value.id).yt !== undefined){
                 const yt = document.createElement("a");
                 const yt_ico = document.createElement("img");
+                yt_ico.id = "icon";
                 yt_ico.src = "youtube-icon.png";
                 yt.target = "blank_";
                 yt.title = value.name + "'s Youtube Channel";
@@ -611,6 +627,7 @@ function createTable(sortedByKey,tbody){
             if(media.get(value.id).ut !== undefined){
                 const ut = document.createElement("a");
                 const ut_ico = document.createElement("img");
+                ut_ico.id = "icon";
                 ut_ico.src = "untapped-icon.png";
                 ut.target = "blank_";
                 ut.title = value.name + "'s Untapped Profile";
@@ -623,6 +640,7 @@ function createTable(sortedByKey,tbody){
             if(media.get(value.id).gg2025 !== undefined){
                 const gg2025 = document.createElement("a");
                 const gg2025_ico = document.createElement("img");
+                gg2025_ico.id = "icon";
                 gg2025_ico.src = "goldengauntlet2025.png";
                 gg2025.target = "blank_";
                 gg2025.title = "2025 Golden Gauntlet Winner";

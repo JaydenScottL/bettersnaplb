@@ -108,7 +108,7 @@ th{
     background:rgb(21, 21, 29);
 }
 
-img{
+#icon{
     position:relative;  
     height:35px;
     border-radius: 5px;
@@ -120,7 +120,7 @@ img{
     border:1px solid transparent;
 }
 
-img:hover{
+#icon:hover{
     transition: all 0.5s ease-out;
     border:1px solid white;
 }
