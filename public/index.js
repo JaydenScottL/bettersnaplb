@@ -418,8 +418,8 @@ function createTable(sortedByKey,tbody){
         apiErrorImage.position = "relative";
         apiErrorImage.src = "ApiError.png";
         apiErrorImage.title = "Empty array received.";
-        apiErrorImage.style.width = "50%";
-        apiErrorImage.style.height = "50%";
+        apiErrorImage.style.width = "80%";
+        apiErrorImage.style.height = "80%";
         apiErrorImage.style.paddingLeft = "5px";
         apiErrorImage.style.paddingTop = "15px";
         tbody.appendChild(apiErrorImage);
