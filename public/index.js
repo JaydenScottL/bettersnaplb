@@ -321,9 +321,7 @@ function buildTable(){
                 row.style.display = 'none';
             } else if(showOnlyLinks){
                 
-                if(nameCell.innerHTML.includes("untapped") && nameCell.getElementsByTagName('a').length == 1){
-                    row.style.display = 'none';
-                }else if(nameCell.innerHTML.includes("goldengauntlet") && nameCell.getElementsByTagName('a').length == 1){
+                if(!(nameCell.innerHTML.includes("https://youtube.com") || nameCell.innerHTML.includes("https://twitch.tv"))){
                     row.style.display = 'none';
                 }else{             
                     row.style.display = '';
@@ -645,7 +643,19 @@ function createTable(sortedByKey,tbody){
                 gg2025.target = "blank_";
                 gg2025.title = "2025 Golden Gauntlet Winner";
                 gg2025.appendChild(gg2025_ico);
-                gg2025.href = "https://marvelsnapzone.com/marvel-snap-golden-gauntlet/";
+                gg2025.href = "https://topdeck.gg/bracket/official-marvel-snap-tournament";
+                links.appendChild(gg2025);
+            }
+
+            if(media.get(value.id).ggII2025 !== undefined){
+                const gg2025 = document.createElement("a");
+                const gg2025_ico = document.createElement("img");
+                gg2025_ico.id = "icon";
+                gg2025_ico.src = "goldengauntletII2025.png";
+                gg2025.target = "blank_";
+                gg2025.title = "2025 Golden Gauntlet II Winner";
+                gg2025.appendChild(gg2025_ico);
+                gg2025.href = "https://topdeck.gg/bracket/marvel-snap-golden-gauntlet-ii";
                 links.appendChild(gg2025);
             }
 
