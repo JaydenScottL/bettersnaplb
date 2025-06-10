@@ -70,7 +70,9 @@ input{
 }
 
 #name_span{
-    position:absolute;
+    position:relative;
+    left:1%;
+    top:10%;
 }
 
 th,td{

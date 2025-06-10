@@ -461,7 +461,11 @@ function createTable(sortedByKey,tbody){
         const tdName = document.createElement('td');
         const tdNameSpan = document.createElement('span');
         tdNameSpan.id = 'name_span';
-        tdNameSpan.textContent = value.name.replace("%20"," ");
+        let tempName = value.name.replace("%20"," ")
+        if(value.name.length > 20){
+            tempName = "[Missing]"
+        }
+        tdNameSpan.textContent = tempName;
         tdName.appendChild(tdNameSpan);
 
         var tempRank = rank;
