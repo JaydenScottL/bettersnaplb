@@ -36,15 +36,17 @@ if(allArguments.season === undefined){
     allArguments.season = 0;
 }
 
-const url = "https://www.marvelsnap.com/act/262304/process/exec/v2";
+const currentDate = new Date();
+console.log(((currentDate.getMonth() + 1) - allArguments.season));
+const url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth() + 1) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
 
-var pids = [
+/*var pids = [
     "7301545892484553477", // global 
     "7301545174432324358", // eu 
     "7301545174432291590", // na
     "7301545892484586245",//asia 
     "7301545892484619013", //other 
-];
+];*/
 
 var requestData = {
     activity_id: "30111426",
@@ -61,39 +63,6 @@ const headers = {
 var media = new Mapper();
 var season_data = new Mapper();
 
-/*const media = new Mapper(
-    ["2309640753",{ttv:"sizer2654",yt:"sizer2654",ut:"bcd75866-aa12-488e-8ed7-65349ec163cf"}],
-    ["3187018143",{ttv:"roramplays",yt:"RoramPlays"}],
-    ["139040794",{ttv:"huskypuppies35"}],
-    ["816264526",{ttv:"safetyblade"}],
-    ["1995681132",{ttv:"evazord",yt:"Evazord"}],
-    ["3067847376",{ttv:"derajn",yt:"derajn",ut:"596a1089-d904-4346-a5cb-14b0412c8c73"}],
-    ["2590104629",{ttv:"dekkster",yt:"DekksterSnap",ut:"cfb1628e-902e-4132-ad8f-dddb9be39698"}],
-    ["885105018",{ttv:"zombiezgonomnom",yt:"ZombiesGoNomNom"}],
-    ["1258972432",{ttv:"andrevar14"}],
-    ["3775516060",{ttv:"spyro_za",yt:"SpyroZA"}],
-    ["295294695",{ttv:"kmbestms",yt:"KMBestInASnap"}],
-    ["3443758727",{ttv:"crimeafoot"}],
-    ["4135298364",{ttv:"gravebees"}],
-    ["1982188250",{ttv:"kx4nsnap"}],
-    ["3173190486",{ttv:"cesanasz"}],
-    ["962612770",{ttv:"tuccrr"}],
-    ["3828390005",{ttv:"revisms",yt:"RevisSnap"}],
-    ["476075167",{ttv:"bynx_plays",yt:"Bynx_Plays"}],
-    ["1925444495",{ttv:"yowoodymj"}],
-    ["4017919401",{ut:"8025b655-b5d7-45c4-8472-b1e7376bc3ea"}],
-    ["1898717762",{ttv:"tlsgsnap",yt:"TLSGMarvelSnap",ut:"8a4e905d-fcbd-4a29-be6a-c251f7e98aca"}],
-    ["1406801013",{ttv:"braude"}],
-    ["2032457780",{ttv:"jeeeeet13"}],
-    ["3536617735",{ttv:"ni_theal",yt:"Ni_Theal-FR"}],
-    ["2065080966",{ttv:"kingvenom",yt:"KingVenom"}],
-    ["2091154312",{ttv:"splaticus"}],
-    ["4270474354",{ttv:"jeffhoogland",yt:"JeffHoogland"}],
-    ["2810453979",{yt:"NoLucksGiven"}],
-    ["1190625010",{yt:"snapjudgmentspod",ttv:"pulseglazer"}],
-    ["1411592087",{yt:"mayorpluto"}]
-);*/
-
 async function fetchMedia(){
     try {
         const response = await fetch('https://raw.githubusercontent.com/jaydenscottl/bettersnaplb/main/media.txt');
@@ -108,6 +77,8 @@ async function fetchMedia(){
     } catch (error) {
         console.error("Error:", error);
     }
+
+    
 }
 
 async function fetchBadgeData(){
@@ -134,10 +105,61 @@ var oc_lb = new Map();
 
 var loading_icon = document.getElementById("loading");
 
+async function fetchViaProxy() {
+    const targetUrl = encodeURIComponent(url);
+    const proxyUrl = `https://corsproxy.io/?${targetUrl}`; 
+  
+    try {
+      const response = await fetch(proxyUrl);
+  
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const rankList = data.results;
+
+        for (let i = 0; i < rankList.length; i++) {
+            lb.set(rankList[i].playerId, {
+                id: rankList[i].playerId,
+                name: rankList[i].playerName,
+                sp: rankList[i].score,
+                //server: rankList[i].server_id, will add later. by data saved
+            });
+        }
+
+
+      console.log(data);
+  
+    } catch (error) {
+      console.error("Could not fetch the Marvel Snap leaderboard via public proxy:", error);
+    }
+
+    document.getElementsByTagName("body")[0].removeChild(loading_icon);
+    buildTable();
+  }
+
+  
+
 async function fetchData() {
 
-    for(var k = 0;k < pids.length;k++){
-        requestData.process_id = pids[k];
+    /*try {
+        const response = await fetch(url, {
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+
+        console.log(response);
+    } catch (error) {
+        console.error("Error:", error);
+    }*/
+
+    /*for(var k = 0;k < pids.length;k++){
+        //requestData.process_id = pids[k];
+        
         try {
         const response = await fetch(url, {
             method: "POST",
@@ -235,15 +257,15 @@ async function fetchData() {
             }*/
             
             //console.log(`Name: ${rankList[i].indicator_0}, Rank: ${i + 1} ID:${rankList[i].open_id}, RoleID: ${rankList[i].role_id}`);
-
+/*
         }
 
         
         } catch (error) {
             console.error("Error:", error);
         }
-    }
-    
+    /*}
+    */
     document.getElementsByTagName("body")[0].removeChild(loading_icon);
     buildTable();
 }
@@ -475,18 +497,6 @@ function createTable(sortedByKey,tbody){
             serverIdElement.textContent = "ID: " + value.id; 
             details.appendChild(serverIdElement);
 
-            const tsElement = document.createElement('p');
-            tsElement.textContent = "Timestamp: " + value.timestamp;
-            details.appendChild(tsElement);
-
-            const serverElement = document.createElement('p');
-            serverElement.textContent = "Server ID: " + value.server; 
-            details.appendChild(serverElement);
-
-            const roleIdElement = document.createElement('p');
-            roleIdElement.textContent = "Role ID: " + value.role_id; 
-            details.appendChild(roleIdElement);
-
             if (media.has(value.id)) {
                 const mediaElement = document.createElement('p');
                 mediaElement.textContent = "Media Links:";
@@ -510,11 +520,11 @@ function createTable(sortedByKey,tbody){
                     details.appendChild(ytLinkP);
                 }
 
-                if (mediaLinks.ut) {
+                if (mediaLinks.ut && mediaLinks.role_id) {
                     const utLinkP = document.createElement('p');
                     const utLink = document.createElement('a');
-                    utLink.href = "https://snap.untapped.gg/en/profile/" + mediaLinks.ut + "/" + value.role_id;
-                    utLink.textContent = "https://snap.untapped.gg/en/profile/" + mediaLinks.ut + "/" + value.role_id;
+                    utLink.href = "https://snap.untapped.gg/en/profile/" + mediaLinks.ut + "/" + mediaLinks.role_id;
+                    utLink.textContent = "https://snap.untapped.gg/en/profile/" + mediaLinks.ut + "/" + mediaLinks.role_id;
                     utLinkP.appendChild(utLink);
                     details.appendChild(utLinkP);
                 }
@@ -684,4 +694,5 @@ function createTable(sortedByKey,tbody){
 
 fetchMedia();
 //fetchBadgeData();
-fetchData();
+//fetchData();
+fetchViaProxy();
