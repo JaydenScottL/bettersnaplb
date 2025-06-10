@@ -37,7 +37,7 @@ if(allArguments.season === undefined){
 }
 
 const currentDate = new Date();
-console.log(((currentDate.getMonth() + 1) - allArguments.season));
+//console.log(((currentDate.getMonth() + 1) - allArguments.season));
 const url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth() + 1) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
 
 /*var pids = [
@@ -78,7 +78,7 @@ async function fetchMedia(){
         console.error("Error:", error);
     }
 
-    
+
 }
 
 async function fetchBadgeData(){
@@ -129,7 +129,7 @@ async function fetchViaProxy() {
         }
 
 
-      console.log(data);
+      //console.log(data);
   
     } catch (error) {
       console.error("Could not fetch the Marvel Snap leaderboard via public proxy:", error);
@@ -461,7 +461,7 @@ function createTable(sortedByKey,tbody){
         const tdName = document.createElement('td');
         const tdNameSpan = document.createElement('span');
         tdNameSpan.id = 'name_span';
-        tdNameSpan.textContent = value.name;
+        tdNameSpan.textContent = value.name.replace("%20"," ");
         tdName.appendChild(tdNameSpan);
 
         var tempRank = rank;
@@ -482,7 +482,7 @@ function createTable(sortedByKey,tbody){
             details.innerHTML = ""; 
 
             const nameElement = document.createElement('p');
-            nameElement.textContent = "Name: " + value.name;
+            nameElement.textContent = "Name: " + value.name.replace("%20"," ");
             details.appendChild(nameElement);
 
             const rankElement = document.createElement('p');
@@ -591,12 +591,12 @@ function createTable(sortedByKey,tbody){
             break;
         }
 
-        const region_ico = document.createElement("img");
+        /**const region_ico = document.createElement("img");
         region_ico.src = region + "-flag.png";
         region_ico.id = "icon";
         region_ico.title = region;
 
-        tdName.appendChild(region_ico);
+        tdName.appendChild(region_ico);**/
 
         //const tdRegion = document.createElement("td");
         //tdRegion.textContent = region;
@@ -640,7 +640,7 @@ function createTable(sortedByKey,tbody){
                 ut.target = "blank_";
                 ut.title = value.name + "'s Untapped Profile";
                 ut.appendChild(ut_ico);
-                ut.href = "https://snap.untapped.gg/en/profile/" + media.get(value.id).ut + "/" + value.role_id;
+                ut.href = "https://snap.untapped.gg/en/profile/" + media.get(value.id).ut + "/" + media.get(value.id).role_id;
                 
                 links.appendChild(ut);
             } 
