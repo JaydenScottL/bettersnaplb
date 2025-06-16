@@ -107,8 +107,8 @@ var loading_icon = document.getElementById("loading");
 
 async function fetchViaProxy() {
     const targetUrl = encodeURIComponent(url);
-    const proxyUrl = `https://corsproxy.io/?${targetUrl}`; 
-  
+    //const proxyUrl = `https://corsproxy.io/?${targetUrl}`; 
+    const proxyUrl = `https://little-water-f222.scottieofaberoth.workers.dev?url=${targetUrl}`; 
     try {
       const response = await fetch(proxyUrl);
   
