@@ -122,7 +122,9 @@
     "ttv": "roramplays",
     "yt": "RoramPlays",
     "ggII2025":"true",
-    "id": "3187018143"
+    "id": "3187018143",
+    "ut": "336cb428-10c9-4e8c-8904-6221bd5bd598",
+    "role_id": "8d0d00b7-2eb1-45b3-961f-075b60d15c5e"
   },
   "3443758727": {
     "ttv": "crimeafoot",
