@@ -40,6 +40,8 @@ const currentDate = new Date();
 //console.log(((currentDate.getMonth() + 1) - allArguments.season));
 const url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth() + 1) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
 
+
+
 /*var pids = [
     "7301545892484553477", // global 
     "7301545174432324358", // eu 
@@ -128,6 +130,10 @@ async function fetchViaProxy() {
             });
         }
 
+        if(rankList.length == 0){
+            url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
+            fetchViaProxy();
+        }
 
       //console.log(data);
   
