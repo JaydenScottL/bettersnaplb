@@ -107,7 +107,7 @@ var oc_lb = new Map();
 
 var loading_icon = document.getElementById("loading");
 
-async function fetchViaProxy() {
+async function fetchViaProxy(rl = true) {
     const targetUrl = encodeURIComponent(url);
     //const proxyUrl = `https://corsproxy.io/?${targetUrl}`; 
     const proxyUrl = `https://little-water-f222.scottieofaberoth.workers.dev?url=${targetUrl}`; 
@@ -130,9 +130,9 @@ async function fetchViaProxy() {
             });
         }
 
-        if(rankList.length == 0){
+        if(rankList.length == 0 && rl){
             url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
-            fetchViaProxy();
+            fetchViaProxy(false);
         }
 
       //console.log(data);
