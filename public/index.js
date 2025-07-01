@@ -133,6 +133,7 @@ async function fetchViaProxy(rl = true) {
         if(rankList.length == 0 && rl){
             url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
             fetchViaProxy(false);
+            return;
         }
 
       //console.log(data);
