@@ -559,16 +559,6 @@ function createTable(sortedByKey,tbody){
                     details.appendChild(utLinkP);
                 }
             }
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'Close';
-            closeButton.onclick = function() {
-                details.style.visibility = 'hidden'; 
-            };
-            details.appendChild(closeButton);
-
-            details.style.left = event.pageX + 'px';
-            details.style.top = event.pageY + 'px';
-            details.style.visibility = 'visible'; 
 
             if(alliances.has(value.name)){
                 const accountRegionElement = document.createElement('p');
@@ -587,7 +577,17 @@ function createTable(sortedByKey,tbody){
                 allianceNameElement.textContent = "Alliance Name: " + alliances.get(value.name).alliance_name; 
                 details.appendChild(allianceNameElement);
             }
-            
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Close';
+            closeButton.onclick = function() {
+                details.style.visibility = 'hidden'; 
+            };
+            details.appendChild(closeButton);
+
+            details.style.left = event.pageX + 'px';
+            details.style.top = event.pageY + 'px';
+            details.style.visibility = 'visible'; 
         });
 
         const tdRank = document.createElement('td');
