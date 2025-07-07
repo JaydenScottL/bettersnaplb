@@ -743,7 +743,7 @@ function createTable(sortedByKey,tbody){
 
         if(alliances.has(value.name)){
             const alliance = document.createElement("img");
-            alliance.src = alliances.get(value.name).tag + ".png";
+            alliance.src = alliances.get(value.name).tag.toLowerCase() + ".png";
             alliance.id = "icon";
             alliance.title = alliances.get(value.name).alliance_name;
             tdName.appendChild(alliance);
