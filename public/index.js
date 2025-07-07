@@ -64,6 +64,7 @@ const headers = {
 
 var media = new Mapper();
 var season_data = new Mapper();
+var alliances = new Mapper();
 
 async function fetchMedia(){
     try {
@@ -83,6 +84,22 @@ async function fetchMedia(){
 
 }
 
+async function fetchAlliances(){
+    try {
+        const response = await fetch('https://quiet-mountain-519c.scottieofaberoth.workers.dev');
+        const data = await response.json();
+
+        for(const key in data){
+            if(data.hasOwnProperty(key)){
+                alliances.set(key,data[key]);
+            }
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
 async function fetchBadgeData(){
     try {
         const response = await fetch('https://raw.githubusercontent.com/jaydenscottl/bettersnaplb/main/season_data/season_data.txt');
@@ -99,6 +116,8 @@ async function fetchBadgeData(){
         console.error("Error:", error);
     }
 }
+
+
 
 var lb = new Map();
 var na_lb = new Map();
@@ -550,6 +569,24 @@ function createTable(sortedByKey,tbody){
             details.style.left = event.pageX + 'px';
             details.style.top = event.pageY + 'px';
             details.style.visibility = 'visible'; 
+
+            if(alliances.has(value.name)){
+                const accountRegionElement = document.createElement('p');
+                accountRegionElement.textContent = "Server: " + alliances.get(value.name).account_region; 
+                details.appendChild(accountRegionElement);
+
+                const approxCollectionScoreElement = document.createElement('p');
+                approxCollectionScoreElement.textContent = "Approximate Collection Score: " + alliances.get(value.name).collection_score; 
+                details.appendChild(approxCollectionScoreElement);
+
+                const allianceTagElement = document.createElement('p');
+                allianceTagElement.textContent = "Alliance Tag: " + alliances.get(value.name).tag; 
+                details.appendChild(allianceTagElement);
+
+                const allianceNameElement = document.createElement('p');
+                allianceNameElement.textContent = "Alliance Name: " + alliances.get(value.name).alliance_name; 
+                details.appendChild(allianceNameElement);
+            }
             
         });
 
@@ -576,7 +613,24 @@ function createTable(sortedByKey,tbody){
 
         var region = "";
 
-        switch(value.server){
+        if(alliances.has(value.name)){
+            if(alliances.get(value.name).account_region.includes("us-")){
+                region = "america";
+            }else if(alliances.get(value.name).account_region.includes("eu-")){
+                region = "europe";
+            }else if(alliances.get(value.name).account_region.includes("ap-")){
+                region = "oceania";
+            }
+
+            const region_ico = document.createElement("img");
+            region_ico.src = region + "-flag.png";
+            region_ico.id = "icon";
+            region_ico.title = region;
+
+            tdName.appendChild(region_ico);
+        }
+
+        /*switch(value.server){
             case "1005":
                 region = "europe";
             break;
@@ -600,7 +654,7 @@ function createTable(sortedByKey,tbody){
             case "1001":
                 region = "america";
             break;
-        }
+        }*/
 
         /**const region_ico = document.createElement("img");
         region_ico.src = region + "-flag.png";
@@ -612,6 +666,8 @@ function createTable(sortedByKey,tbody){
         //const tdRegion = document.createElement("td");
         //tdRegion.textContent = region;
         //row.appendChild(tdRegion);
+
+        
 
         if(media.has(value.id)){
             const links = document.createElement("span");
@@ -685,6 +741,18 @@ function createTable(sortedByKey,tbody){
 
         }
 
+        if(alliances.has(value.name)){
+            const alliance = document.createElement("img");
+            alliance.src = alliances.get(value.name).tag + ".png";
+            alliance.id = "icon";
+            alliance.title = alliances.get(value.name).alliance_name;
+            tdName.appendChild(alliance);
+
+            const accountRegionElement = document.createElement('p');
+            accountRegionElement.textContent = "Server: " + alliances.get(value.name).account_region; 
+            details.appendChild(accountRegionElement);
+        }
+
         /*if(season_data.get(value.id) !== undefined){
             //const ps = document.createElement("span");
             //ps.className = "rankSpan";
@@ -703,6 +771,7 @@ function createTable(sortedByKey,tbody){
     });
 }
 
+fetchAlliances();
 fetchMedia();
 //fetchBadgeData();
 //fetchData();
