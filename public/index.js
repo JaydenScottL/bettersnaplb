@@ -742,15 +742,33 @@ function createTable(sortedByKey,tbody){
         }
 
         if(alliances.has(value.name)){
-            const alliance = document.createElement("img");
-            alliance.src = alliances.get(value.name).tag.toLowerCase() + ".png";
-            alliance.id = "icon";
-            alliance.title = alliances.get(value.name).alliance_name;
-            tdName.appendChild(alliance);
+            if(alliances.get(value.name).tag.toLowerCase() === "fak"){
+                const allianceLink = document.createElement("a");
+                const alliance = document.createElement("img");
+                alliance.src = alliances.get(value.name).tag.toLowerCase() + ".png";
+                alliance.id = "icon";
+                alliance.title = alliances.get(value.name).alliance_name;
+                allianceLink.href = "https://x.com/FAK_SNAP";
+                allianceLink.target = "_blank";
+                allianceLink.appendChild(alliance);
+                tdName.appendChild(allianceLink);
 
-            const accountRegionElement = document.createElement('p');
-            accountRegionElement.textContent = "Server: " + alliances.get(value.name).account_region; 
-            details.appendChild(accountRegionElement);
+                const accountRegionElement = document.createElement('p');
+                accountRegionElement.textContent = "Server: " + alliances.get(value.name).account_region; 
+                details.appendChild(accountRegionElement);
+            }else{
+                const alliance = document.createElement("img");
+                alliance.src = alliances.get(value.name).tag.toLowerCase() + ".png";
+                alliance.id = "icon";
+                alliance.title = alliances.get(value.name).alliance_name;
+                tdName.appendChild(alliance);
+
+                const accountRegionElement = document.createElement('p');
+                accountRegionElement.textContent = "Server: " + alliances.get(value.name).account_region; 
+                details.appendChild(accountRegionElement);
+            }
+
+            
         }
 
         /*if(season_data.get(value.id) !== undefined){
