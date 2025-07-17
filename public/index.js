@@ -685,7 +685,7 @@ function createTable(sortedByKey,tbody){
         //row.appendChild(tdRegion);
 
         if(patches.has(value.id)){
-            nameElement.textContent = patches.get(value.id).name;
+            tdNameSpan.textContent = patches.get(value.id).name;
         }
 
         if(media.has(value.id)){
