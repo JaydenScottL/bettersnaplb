@@ -685,6 +685,7 @@ function createTable(sortedByKey,tbody){
         //row.appendChild(tdRegion);
 
         if(patches.has(value.id)){
+            value.name = patches.get(value.id).name;
             tdNameSpan.textContent = patches.get(value.id).name;
         }
 
