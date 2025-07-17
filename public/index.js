@@ -63,6 +63,7 @@ const headers = {
 };
 
 var media = new Mapper();
+var patches = new Mapper();
 var season_data = new Mapper();
 var alliances = new Mapper();
 
@@ -74,6 +75,24 @@ async function fetchMedia(){
         for(const key in data){
             if(data.hasOwnProperty(key)){
                 media.set(key,data[key]);
+            }
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+
+
+}
+
+async function fetchPatches(){
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/jaydenscottl/bettersnaplb/main/patches.json');
+        const data = await response.json();
+
+        for(const key in data){
+            if(data.hasOwnProperty(key)){
+                patches.set(key,data[key]);
             }
         }
 
@@ -128,7 +147,6 @@ var loading_icon = document.getElementById("loading");
 
 async function fetchViaProxy(rl = true) {
     const targetUrl = encodeURIComponent(url);
-    //const proxyUrl = `https://corsproxy.io/?${targetUrl}`; 
     const proxyUrl = `https://little-water-f222.scottieofaberoth.workers.dev?url=${targetUrl}`; 
     try {
       const response = await fetch(proxyUrl);
@@ -145,7 +163,6 @@ async function fetchViaProxy(rl = true) {
                 id: rankList[i].playerId,
                 name: rankList[i].playerName,
                 sp: rankList[i].score,
-                //server: rankList[i].server_id, will add later. by data saved
             });
         }
 
@@ -667,7 +684,9 @@ function createTable(sortedByKey,tbody){
         //tdRegion.textContent = region;
         //row.appendChild(tdRegion);
 
-        
+        if(patches.has(value.id)){
+            nameElement.textContent = patches.get(value.id).name;
+        }
 
         if(media.has(value.id)){
             const links = document.createElement("span");
@@ -791,6 +810,7 @@ function createTable(sortedByKey,tbody){
 
 fetchAlliances();
 fetchMedia();
+fetchPatches();
 //fetchBadgeData();
 //fetchData();
 fetchViaProxy();
