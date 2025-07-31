@@ -144,19 +144,27 @@ var eu_lb = new Map();
 var oc_lb = new Map();
 
 var loading_icon = document.getElementById("loading");
-
-async function fetchViaProxy(rl = true) {
+var rl = true;
+async function fetchViaProxy() {
     const targetUrl = encodeURIComponent(url);
     const proxyUrl = `https://little-water-f222.scottieofaberoth.workers.dev?url=${targetUrl}`; 
     try {
       const response = await fetch(proxyUrl);
-  
-        if (!response.ok) {
+        
+        /*if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        }*/
+
+        
 
         const data = await response.json();
         const rankList = data.results;
+
+        if(data.code == "invalid_month" && rl){
+            url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
+            fetchViaProxy(false);
+            return;
+        }
 
         for (let i = 0; i < rankList.length; i++) {
             lb.set(rankList[i].playerId, {
@@ -165,12 +173,7 @@ async function fetchViaProxy(rl = true) {
                 sp: rankList[i].score,
             });
         }
-
-        if(rankList.length == 0 && rl){
-            url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
-            fetchViaProxy(false);
-            return;
-        }
+        
 
       //console.log(data);
   
@@ -361,8 +364,13 @@ function buildTable(){
     const previousSeasonButton = document.createElement('button');
     previousSeasonLink.appendChild(previousSeasonButton);
     if(allArguments.season == 0){
-        previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=1";
-        previousSeasonButton.textContent = "View Previous Season";
+        if(rl){
+            previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=1";
+            previousSeasonButton.textContent = "View Previous Season";
+        }else{
+            previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=2";
+            previousSeasonButton.textContent = "View Current Season";
+        }
     }else{
         previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=0";
         previousSeasonButton.textContent = "View Current Season";
