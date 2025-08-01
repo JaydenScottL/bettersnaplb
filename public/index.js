@@ -160,7 +160,7 @@ async function fetchViaProxy() {
         const data = await response.json();
         const rankList = data.results;
 
-        if(data.code == "invalid_month" && rl){
+        if((data.code === "invalid_month" || data.total === 0) && rl){
             url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
             rl = false;
             fetchViaProxy();
