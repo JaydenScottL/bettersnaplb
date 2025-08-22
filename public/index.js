@@ -719,7 +719,7 @@ function createTable(sortedByKey,tbody){
                               },
                               pointStyle:false,
                               borderJoinStyle:"round",
-                            label: 'SP',
+                            label: value.name + "'s SP",
                             data: data_,
                             borderWidth: 1
                         }]
