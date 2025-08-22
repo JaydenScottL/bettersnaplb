@@ -144,6 +144,54 @@ var eu_lb = new Map();
 var oc_lb = new Map();
 
 var loading_icon = document.getElementById("loading");
+
+
+
+
+var chartData;
+
+async function fetchChartData(){
+    try {
+        const response = await fetch('https://lucky-wind-9611.scottieaberoth.workers.dev/_data.json');
+        chartData = await response.json();
+
+/*document.getElementsByTagName("body")[0].appendChild(ctx);
+        const response = await fetch('https://lucky-wind-9611.scottieaberoth.workers.dev/_data.json');
+        const data = await response.json();
+
+        var labels = [];
+        console.log(data[Object.keys(data)[0]]);
+
+        for(var i = 0; i < data[Object.keys(data)[0]].length; i++){
+            labels.push(data[Object.keys(data)[0]][i].score);
+        }
+
+        new Chart(ctx, {
+            type: 'line', // or 'line', 'pie', etc.
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3, 5, 2, 3],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });*/
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+// Create a new Chart instance
+fetchChartData();
+
 var rl = true;
 async function fetchViaProxy() {
     const targetUrl = encodeURIComponent(url);
@@ -605,6 +653,10 @@ function createTable(sortedByKey,tbody){
                 details.appendChild(allianceNameElement);
             }
 
+            
+
+            
+
             const closeButton = document.createElement('button');
             closeButton.textContent = 'Close';
             closeButton.onclick = function() {
@@ -615,6 +667,76 @@ function createTable(sortedByKey,tbody){
             details.style.left = event.pageX + 'px';
             details.style.top = event.pageY + 'px';
             details.style.visibility = 'visible'; 
+
+            const chartGenButton = document.createElement('button');
+            chartGenButton.textContent = 'Generate SP Chart';
+            chartGenButton.onclick = function() {
+                details.style.visibility = 'hidden'; 
+                const chartElement = document.createElement('canvas');
+                chartElement.className = "chart_";
+                chartElement.id = 'chart';
+                
+
+                const chartContainer = document.createElement('div');
+                chartContainer.className = "chart_container";
+                document.getElementsByTagName("body")[0].appendChild(chartContainer);
+                chartContainer.appendChild(chartElement);
+
+                const closeChartButton = document.createElement('button');
+                closeChartButton.textContent = 'Close';
+                closeChartButton.margin = "0 !important";
+                closeChartButton.padding = "0 !important";
+                closeChartButton.onclick = function() {
+                    details.style.visibility = 'hidden'; 
+                    chartContainer.removeChild(closeChartButton);
+                    document.getElementsByTagName("body")[0].removeChild(chartContainer);
+                    
+                };
+                chartContainer.appendChild(closeChartButton);
+
+                
+                
+
+                var data_ = [];
+                var labels = [];
+
+                for(var i = 0; i < chartData[value.id].length; i++){
+                    data_.push(chartData[value.id][i].score);
+                    const dateObject = new Date(parseInt(chartData[value.id][i].date));
+                    labels.push(dateObject.toLocaleDateString() + " " + dateObject.toLocaleTimeString());
+                    //data.push(chartData[value.id][i].rank);
+                }
+
+                new Chart(chartElement, {
+                    type: 'line', // or 'line', 'pie', etc.
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            fill: {
+                                target: 'origin',
+                                above: 'rgb(31, 31, 117)',   // Area will be red above the origin
+                                below: 'rgb(10,10,50)'    // And blue below the origin
+                              },
+                              pointStyle:false,
+                              borderJoinStyle:"round",
+                            label: 'SP',
+                            data: data_,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        
+                        scales: {
+                            y: {
+                                
+                                
+                            }
+                        }
+                    }
+                });
+            
+            };
+            details.appendChild(chartGenButton);
         });
 
         const tdRank = document.createElement('td');
