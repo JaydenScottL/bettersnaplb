@@ -701,8 +701,8 @@ function createTable(sortedByKey,tbody){
                 var labels = [];
 
                 for(var i = 0; i < chartData[value.id].length; i++){
-                    data_.push(chartData[value.id][i].score);
-                    const dateObject = new Date(parseInt(chartData[value.id][i].date));
+                    data_.push(chartData[value.id][i].s);
+                    const dateObject = new Date(parseInt(chartData[value.id][i].d));
                     labels.push(dateObject.toLocaleDateString() + " " + dateObject.toLocaleTimeString());
                     //data.push(chartData[value.id][i].rank);
                 }
