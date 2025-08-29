@@ -152,7 +152,7 @@ var chartData;
 
 async function fetchChartData(){
     try {
-        const response = await fetch('https://lucky-wind-9611.scottieaberoth.workers.dev/_data.json');
+        const response = await fetch('https://muddy-salad-4dae.ytjaycr.workers.dev/');
         chartData = await response.json();
 
 /*document.getElementsByTagName("body")[0].appendChild(ctx);
