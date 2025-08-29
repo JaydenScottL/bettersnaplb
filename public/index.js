@@ -153,37 +153,12 @@ var chartData;
 async function fetchChartData(){
     try {
         const response = await fetch('https://muddy-salad-4dae.ytjaycr.workers.dev/');
-        chartData = await response.json();
+        var responseText = await response.text();
+        //console.log(responseText);
 
-/*document.getElementsByTagName("body")[0].appendChild(ctx);
-        const response = await fetch('https://lucky-wind-9611.scottieaberoth.workers.dev/_data.json');
-        const data = await response.json();
+        const wrappedJson = "{" + responseText + "}";
+        chartData = JSON.parse(wrappedJson);
 
-        var labels = [];
-        console.log(data[Object.keys(data)[0]]);
-
-        for(var i = 0; i < data[Object.keys(data)[0]].length; i++){
-            labels.push(data[Object.keys(data)[0]][i].score);
-        }
-
-        new Chart(ctx, {
-            type: 'line', // or 'line', 'pie', etc.
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });*/
     } catch (error) {
         console.error("Error:", error);
     }
@@ -700,11 +675,10 @@ function createTable(sortedByKey,tbody){
                 var data_ = [];
                 var labels = [];
 
-                for(var i = 0; i < chartData[value.id].length; i++){
-                    data_.push(chartData[value.id][i].s);
-                    const dateObject = new Date(parseInt(chartData[value.id][i].d));
+                for(const datetime in chartData){
+                    data_.push(chartData[datetime][value.id]);
+                    const dateObject = new Date(parseInt(datetime));
                     labels.push(dateObject.toLocaleDateString() + " " + dateObject.toLocaleTimeString());
-                    //data.push(chartData[value.id][i].rank);
                 }
 
                 new Chart(chartElement, {
