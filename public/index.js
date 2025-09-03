@@ -69,7 +69,7 @@ var alliances = new Mapper();
 
 async function fetchMedia(){
     try {
-        const response = await fetch('https://raw.githubusercontent.com/jaydenscottl/bettersnaplb/main/media.txt');
+        const response = await fetch('https://blue-disk-0eff.scottieofaberoth.workers.dev/');
         const data = await response.json();
 
         for(const key in data){
@@ -119,9 +119,10 @@ async function fetchAlliances(){
     }
 }
 
+/*
 async function fetchBadgeData(){
     try {
-        const response = await fetch('https://raw.githubusercontent.com/jaydenscottl/bettersnaplb/main/season_data/season_data.txt');
+        const response = await fetch('https://blue-disk-0eff.scottieofaberoth.workers.dev/');
         const data = await response.json();
 
         for(const key in data){
@@ -134,7 +135,7 @@ async function fetchBadgeData(){
     } catch (error) {
         console.error("Error:", error);
     }
-}
+}*/
 
 
 
