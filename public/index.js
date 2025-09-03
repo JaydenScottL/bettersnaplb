@@ -152,7 +152,11 @@ var chartData;
 
 async function fetchChartData(){
     try {
-        const response = await fetch('https://muddy-salad-4dae.ytjaycr.workers.dev/');
+        var chartSource = 'https://muddy-salad-4dae.ytjaycr.workers.dev/';
+        if(!(allArguments.season === 0)){
+            chartSource = 'https://nameless-haze-54d7.ytjaycr.workers.dev/';
+        }
+        const response = await fetch(chartSource);
         var responseText = await response.text();
         //console.log(responseText);
 
