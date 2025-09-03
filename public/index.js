@@ -33,7 +33,7 @@ urlParams.forEach((value, key) => {
 });
 
 if(allArguments.season === undefined){
-    allArguments.season = 0;
+    allArguments.season = "0";
 }
 
 const currentDate = new Date();
@@ -153,7 +153,7 @@ var chartData;
 async function fetchChartData(){
     try {
         var chartSource = 'https://muddy-salad-4dae.ytjaycr.workers.dev/';
-        if(!(allArguments.season === 0)){
+        if(!(allArguments.season === "0")){
             chartSource = 'https://nameless-haze-54d7.ytjaycr.workers.dev/';
         }
         const response = await fetch(chartSource);
