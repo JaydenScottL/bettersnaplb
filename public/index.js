@@ -681,7 +681,7 @@ function createTable(sortedByKey,tbody){
                 var labels = [];
 
                 for(const datetime in chartData){
-                    if(chartData[datetime].includes(value.id)){
+                    if(chartData[datetime][value.id] !== undefined ){
                         data_.push(chartData[datetime][value.id]);
                         const dateObject = new Date(parseInt(datetime));
                         labels.push(dateObject.toLocaleDateString() + " " + dateObject.toLocaleTimeString());
