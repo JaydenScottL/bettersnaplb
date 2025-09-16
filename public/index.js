@@ -732,6 +732,11 @@ function createTable(sortedByKey,tbody){
 
         }
 
+        if(patches.has(value.id)){
+            value.name = patches.get(value.id).name;
+            tdNameSpan.textContent = patches.get(value.id).name;
+        }
+
         const tdPoints = document.createElement('td');
         tdPoints.textContent = value.sp;
         const id = document.createElement('td');
@@ -797,10 +802,7 @@ function createTable(sortedByKey,tbody){
         //tdRegion.textContent = region;
         //row.appendChild(tdRegion);
 
-        if(patches.has(value.id)){
-            value.name = patches.get(value.id).name;
-            tdNameSpan.textContent = patches.get(value.id).name;
-        }
+        
 
         if(media.has(value.id)){
             const links = document.createElement("span");
