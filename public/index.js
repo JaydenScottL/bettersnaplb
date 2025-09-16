@@ -540,7 +540,6 @@ function createTable(sortedByKey,tbody){
 
         if(patches.has(value.id)){
             value.name = patches.get(value.id).name;
-            tdNameSpan.textContent = patches.get(value.id).name;
         }
 
         const row = document.createElement('tr');
