@@ -538,6 +538,11 @@ function createTable(sortedByKey,tbody){
             return;
         }
 
+        if(patches.has(value.id)){
+            value.name = patches.get(value.id).name;
+            tdNameSpan.textContent = patches.get(value.id).name;
+        }
+
         const row = document.createElement('tr');
         const tdName = document.createElement('td');
         const tdNameSpan = document.createElement('span');
@@ -730,11 +735,6 @@ function createTable(sortedByKey,tbody){
             qm.title = "Rank beyond 1000 is only based on available data and may not be accurate.";
             tdRank.appendChild(qm);
 
-        }
-
-        if(patches.has(value.id)){
-            value.name = patches.get(value.id).name;
-            tdNameSpan.textContent = patches.get(value.id).name;
         }
 
         const tdPoints = document.createElement('td');
