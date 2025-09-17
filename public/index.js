@@ -170,7 +170,7 @@ async function fetchChartData(){
 }
 
 // Create a new Chart instance
-fetchChartData();
+
 
 var rl = true;
 async function fetchViaProxy() {
@@ -204,6 +204,8 @@ async function fetchViaProxy() {
             });
         }
         
+        document.getElementsByTagName("body")[0].removeChild(loading_icon);
+        buildTable();
 
       //console.log(data);
   
@@ -211,8 +213,7 @@ async function fetchViaProxy() {
       console.error("Could not fetch the Marvel Snap leaderboard via public proxy:", error);
     }
 
-    document.getElementsByTagName("body")[0].removeChild(loading_icon);
-    buildTable();
+    
   }
 
   
@@ -922,10 +923,12 @@ function createTable(sortedByKey,tbody){
         rank++;
     });
 }
+async function fetchData(){
+    fetchChartData();
+    await fetchAlliances();
+    await fetchMedia();
+    await fetchPatches();
+    await fetchViaProxy();
+}
 
-fetchAlliances();
-fetchMedia();
-fetchPatches();
-//fetchBadgeData();
-//fetchData();
-fetchViaProxy();
+fetchData();
