@@ -871,6 +871,18 @@ function createTable(sortedByKey,tbody){
                 links.appendChild(gg2025);
             }
 
+            if(media.get(value.id).ggIII2025 !== undefined){
+                const gg2025 = document.createElement("a");
+                const gg2025_ico = document.createElement("img");
+                gg2025_ico.id = "icon";
+                gg2025_ico.src = "goldengauntletIII2025.png";
+                gg2025.target = "blank_";
+                gg2025.title = "2025 Golden Gauntlet World Championship Winner";
+                gg2025.appendChild(gg2025_ico);
+                gg2025.href = "https://topdeck.gg/bracket/marvel-snap-golden-gauntlet-world-championship";
+                links.appendChild(gg2025);
+            }
+
             tdName.appendChild(links);
 
 
