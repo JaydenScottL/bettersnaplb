@@ -75,6 +75,7 @@ async function fetchMedia(){
         for(const key in data){
             if(data.hasOwnProperty(key)){
                 media.set(key,data[key]);
+                console.log(key);
             }
         }
 
@@ -82,7 +83,7 @@ async function fetchMedia(){
         console.error("Error:", error);
     }
 
-
+    
 }
 
 async function fetchPatches(){
@@ -202,8 +203,8 @@ async function fetchViaProxy() {
         }
 
         for (let i = 0; i < rankList.length; i++) {
-            lb.set(rankList[i].playerId, {
-                id: rankList[i].playerId,
+            lb.set(rankList[i].playerName, {
+                id: "not_available" + (i),
                 name: rankList[i].playerName,
                 sp: rankList[i].score,
             });
@@ -544,8 +545,9 @@ function createTable(sortedByKey,tbody){
             return;
         }
 
-        if(patches.has(value.id)){
-            value.name = patches.get(value.id).name;
+        if(alliances.has(value.name)){
+            value.id = alliances.get(value.name).id;
+            //console.log(value.id);
         }
 
         const row = document.createElement('tr');
@@ -592,7 +594,9 @@ function createTable(sortedByKey,tbody){
             serverIdElement.textContent = "ID: " + value.id; 
             details.appendChild(serverIdElement);
 
+            console.log(value.id);
             if (media.has(value.id)) {
+                console.log(value.id);
                 const mediaElement = document.createElement('p');
                 mediaElement.textContent = "Media Links:";
                 details.appendChild(mediaElement);
@@ -691,8 +695,8 @@ function createTable(sortedByKey,tbody){
                 var labels = [];
 
                 for(const datetime in chartData){
-                    if(chartData[datetime][value.id] !== undefined ){
-                        data_.push(chartData[datetime][value.id]);
+                    if(chartData[datetime][value.name] !== undefined ){
+                        data_.push(chartData[datetime][value.name]);
                         const dateObject = new Date(parseInt(datetime));
                         labels.push(dateObject.toLocaleDateString() + " " + dateObject.toLocaleTimeString());
                     }
@@ -767,6 +771,8 @@ function createTable(sortedByKey,tbody){
             region_ico.id = "icon";
             region_ico.title = region;
 
+            
+
             tdName.appendChild(region_ico);
         }
 
@@ -808,7 +814,7 @@ function createTable(sortedByKey,tbody){
         //row.appendChild(tdRegion);
 
         
-
+        
         if(media.has(value.id)){
             const links = document.createElement("span");
 
