@@ -75,7 +75,7 @@ async function fetchMedia(){
         for(const key in data){
             if(data.hasOwnProperty(key)){
                 media.set(key,data[key]);
-                console.log(key);
+                //console.log(key);
             }
         }
 
@@ -594,9 +594,9 @@ function createTable(sortedByKey,tbody){
             serverIdElement.textContent = "ID: " + value.id; 
             details.appendChild(serverIdElement);
 
-            console.log(value.id);
+            //console.log(value.id);
             if (media.has(value.id)) {
-                console.log(value.id);
+                //console.log(value.id);
                 const mediaElement = document.createElement('p');
                 mediaElement.textContent = "Media Links:";
                 details.appendChild(mediaElement);
@@ -694,6 +694,8 @@ function createTable(sortedByKey,tbody){
                 var data_ = [];
                 var labels = [];
 
+                
+
                 for(const datetime in chartData){
                     if(chartData[datetime][value.name] !== undefined ){
                         data_.push(chartData[datetime][value.name]);
@@ -702,7 +704,9 @@ function createTable(sortedByKey,tbody){
                     }
                 }
 
-                new Chart(chartElement, {
+                
+
+                var chart_ =new Chart(chartElement, {
                     type: 'line', // or 'line', 'pie', etc.
                     data: {
                         labels: labels,
@@ -729,8 +733,24 @@ function createTable(sortedByKey,tbody){
                         }
                     }
                 });
-            
+
+                var chartSlider = document.createElement('input');
+                chartSlider.className = "slider";
+                chartSlider.type = 'range';
+                chartSlider.min = 0;
+                chartSlider.max = data_.length-10;
+                chartSlider.value = 0;
+                chartSlider.oninput = function() {
+                    chart_.data.datasets[0].data = data_.slice(chartSlider.value, data_.length);
+                    chart_.data.labels = labels.slice(chartSlider.value, labels.length);
+                    chart_.update();
+                };
+                chartContainer.appendChild(chartSlider);
+                    
             };
+
+            
+            
             details.appendChild(chartGenButton);
         });
 
