@@ -38,7 +38,7 @@ if(allArguments.season === undefined){
 
 const currentDate = new Date();
 //console.log(((currentDate.getMonth() + 1) - allArguments.season));
-var url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth() + 1) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
+var url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth() + 1) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=na";
 
 
 
@@ -191,10 +191,10 @@ async function fetchViaProxy() {
 
         if((data.code === "invalid_month" || data.total === 0) && rl){
             if(currentDate.getMonth()===0){
-                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + (12 - allArguments.season) + " &year=" + (currentDate.getYear() - 1) + "&region=global";
+                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + (12 - allArguments.season) + " &year=" + (currentDate.getYear() - 1) + "&region=na";
 
             }else{
-                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
+                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=na";
             }
             rl = false;
             fetchViaProxy();
