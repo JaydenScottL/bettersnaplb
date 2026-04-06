@@ -38,7 +38,7 @@ if(allArguments.season === undefined){
 
 const currentDate = new Date();
 //console.log(((currentDate.getMonth() + 1) - allArguments.season));
-var url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth() + 1) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=na";
+var url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth() + 1) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
 
 
 
@@ -191,10 +191,10 @@ async function fetchViaProxy() {
 
         if((data.code === "invalid_month" || data.total === 0) && rl){
             if(currentDate.getMonth()===0){
-                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + (12 - allArguments.season) + " &year=" + (currentDate.getYear() - 1) + "&region=na";
+                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + (12 - allArguments.season) + " &year=" + (currentDate.getYear() - 1) + "&region=global";
 
             }else{
-                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=na";
+                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
             }
             rl = false;
             fetchViaProxy();
@@ -203,6 +203,9 @@ async function fetchViaProxy() {
         }
 
         for (let i = 0; i < rankList.length; i++) {
+            if(lb.has(rankList[i].playerName)){
+                rankList[i].playerName = rankList[i].playerName + " (2)";
+            }
             lb.set(rankList[i].playerName, {
                 id: "not_available" + (i),
                 name: rankList[i].playerName,
