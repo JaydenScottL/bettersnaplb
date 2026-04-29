@@ -204,13 +204,20 @@ async function fetchViaProxy() {
 
         for (let i = 0; i < rankList.length; i++) {
             if(lb.has(rankList[i].playerName)){
-                rankList[i].playerName = rankList[i].playerName + " (2)";
-            }
-            lb.set(rankList[i].playerName, {
+                
+                lb.set(rankList[i].playerName + ("("+ (i + 1)+ ")"), {
                 id: "not_available" + (i),
-                name: rankList[i].playerName,
+                name: rankList[i].playerName + ("("+ (i  +  1) + ")"),
                 sp: rankList[i].score,
             });
+            }else{
+                lb.set(rankList[i].playerName, {
+                    id: "not_available" + (i),
+                    name: rankList[i].playerName,
+                    sp: rankList[i].score,
+                });
+            }
+            
         }
         
         document.getElementsByTagName("body")[0].removeChild(loading_icon);
@@ -544,8 +551,8 @@ function createTable(sortedByKey,tbody){
 
     sortedByKey.forEach((value, key) =>{
 
-        if(rank > 1000){
-            return;
+        if(rank > 1001){
+            //return;
         }
 
         if(alliances.has(value.name)){
