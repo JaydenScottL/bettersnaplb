@@ -1,388 +1,354 @@
-class Mapper {
-    constructor(...initialEntries) {
-      this.map = new Map(initialEntries);
-    }
+const MEDIA_URL = 'https://blue-disk-0eff.scottieofaberoth.workers.dev/';
+const ALLIANCES_URL = 'https://quiet-mountain-519c.scottieofaberoth.workers.dev';
+const LEADERBOARD_PROXY_URL = 'https://little-water-f222.scottieofaberoth.workers.dev';
+const CHART_URL_CURRENT_SEASON = 'https://muddy-salad-4dae.ytjaycr.workers.dev/';
+const CHART_URL_PREVIOUS_SEASON = 'https://nameless-haze-54d7.ytjaycr.workers.dev/';
 
-    set(key, value) {
-      this.map.set(key, value);
-    }
+const REGIONS = ["America", "Europe", "Oceania", "Global"];
+const GLOBAL_REGION_INDEX = REGIONS.length - 1;
+const UNVERIFIED_RANK_THRESHOLD = 1000;
+const MAX_TRUSTED_NAME_LENGTH = 20;
 
-    get(key) {
-      return this.map.get(key);
-    }
-
-    has(key) {
-      return this.map.has(key);
-    }
-
-    delete(key) {
-      this.map.delete(key);
-    }
-
-    size() {
-      return this.map.size;
-    }
-}
-
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-
-const allArguments = {};
-urlParams.forEach((value, key) => {
-  allArguments[key] = value;
-});
-
-if(allArguments.season === undefined){
-    allArguments.season = "0";
-}
+const urlParams = new URLSearchParams(window.location.search);
+const season = Number(urlParams.get("season") ?? 0) || 0;
 
 const currentDate = new Date();
-//console.log(((currentDate.getMonth() + 1) - allArguments.season));
-var url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth() + 1) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
 
+let media = new Map();
+let alliances = new Map();
+const lb = new Map();
 
+let chartData = null;
+let usedMonthRolloverRetry = false;
 
-/*var pids = [
-    "7301545892484553477", // global 
-    "7301545174432324358", // eu 
-    "7301545174432291590", // na
-    "7301545892484586245",//asia 
-    "7301545892484619013", //other 
-];*/
-
-var requestData = {
-    activity_id: "30111426",
-    front_params: "{\"last_season\":\"" + allArguments.season.toString() + "\"}",
-    login_type: "no_login",
-    process_id:"0"
-};
-
-
-const headers = {
-    "Content-Type": "application/json",
-};
-
-var media = new Mapper();
-var patches = new Mapper();
-var season_data = new Mapper();
-var alliances = new Mapper();
-
-async function fetchMedia(){
-    try {
-        const response = await fetch('https://blue-disk-0eff.scottieofaberoth.workers.dev/');
-        const data = await response.json();
-
-        for(const key in data){
-            if(data.hasOwnProperty(key)){
-                media.set(key,data[key]);
-                //console.log(key);
-            }
-        }
-
-    } catch (error) {
-        console.error("Error:", error);
-    }
-
-    
+function buildLeaderboardUrl(month, year) {
+    return `https://marvelsnap.com/wp-json/api/v1/leaderboard?month=${month}&year=${year}&region=global`;
 }
 
-async function fetchPatches(){
-    try {
-        const response = await fetch('https://raw.githubusercontent.com/jaydenscottl/bettersnaplb/main/patches.json');
-        const data = await response.json();
+let leaderboardUrl = buildLeaderboardUrl(
+    currentDate.getMonth() + 1 - season,
+    currentDate.getFullYear()
+);
 
-        for(const key in data){
-            if(data.hasOwnProperty(key)){
-                patches.set(key,data[key]);
-            }
-        }
-
-    } catch (error) {
-        console.error("Error:", error);
-    }
-
-
+async function fetchAsMap(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    return new Map(Object.entries(data));
 }
 
-async function fetchAlliances(){
+async function fetchMedia() {
     try {
-        const response = await fetch('https://quiet-mountain-519c.scottieofaberoth.workers.dev');
-        const data = await response.json();
-
-        for(const key in data){
-            if(data.hasOwnProperty(key)){
-                alliances.set(key,data[key]);
-            }
-        }
-
+        media = await fetchAsMap(MEDIA_URL);
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error loading media data:", error);
     }
 }
 
-/*
-async function fetchBadgeData(){
+async function fetchAlliances() {
     try {
-        const response = await fetch('https://blue-disk-0eff.scottieofaberoth.workers.dev/');
-        const data = await response.json();
-
-        for(const key in data){
-            if(data.hasOwnProperty(key)){
-                console.log(data[key][0]);
-                season_data.set(data[key][0],data[key][1]);
-            }
-        }
-
+        alliances = await fetchAsMap(ALLIANCES_URL);
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error loading alliance data:", error);
     }
-}*/
+}
 
-
-
-var lb = new Map();
-var na_lb = new Map();
-var eu_lb = new Map();
-var oc_lb = new Map();
-
-var loading_icon = document.getElementById("loading");
-
-
-
-
-var chartData;
-
-async function fetchChartData(){
+async function fetchChartData() {
     try {
-        var chartSource = 'https://muddy-salad-4dae.ytjaycr.workers.dev/';
-        if(!(allArguments.season === "0")){
-            chartSource = 'https://nameless-haze-54d7.ytjaycr.workers.dev/';
-        }
+        const chartSource = season === 0 ? CHART_URL_CURRENT_SEASON : CHART_URL_PREVIOUS_SEASON;
         const response = await fetch(chartSource);
-        var responseText = await response.text();
-        //console.log(responseText);
-
-        const wrappedJson = "{" + responseText + "}";
-        chartData = JSON.parse(wrappedJson);
-
+        const responseText = await response.text();
+        chartData = JSON.parse(`{${responseText}}`);
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error loading chart data:", error);
+        chartData = null;
     }
 }
 
-// Create a new Chart instance
+async function fetchLeaderboard() {
+    const proxyUrl = `${LEADERBOARD_PROXY_URL}?url=${encodeURIComponent(leaderboardUrl)}`;
 
-
-var rl = true;
-async function fetchViaProxy() {
-    const targetUrl = encodeURIComponent(url);
-    const proxyUrl = `https://little-water-f222.scottieofaberoth.workers.dev?url=${targetUrl}`; 
     try {
-      const response = await fetch(proxyUrl);
-        
-        /*if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-        }*/
-
-        
-
+        const response = await fetch(proxyUrl);
         const data = await response.json();
-        const rankList = data.results;
+        const rankList = Array.isArray(data.results) ? data.results : [];
 
-        if((data.code === "invalid_month" || data.total === 0) && rl){
-            if(currentDate.getMonth()===0){
-                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + (12 - allArguments.season) + " &year=" + (currentDate.getYear() - 1) + "&region=global";
+        if ((data.code === "invalid_month" || data.total === 0) && !usedMonthRolloverRetry) {
+            usedMonthRolloverRetry = true;
 
-            }else{
-                url = "https://marvelsnap.com/wp-json/api/v1/leaderboard?month=" + ((currentDate.getMonth()) - allArguments.season) + " &year=" + currentDate.getYear() + "&region=global";
-            }
-            rl = false;
-            fetchViaProxy();
-            
+            const rollsIntoPreviousYear = currentDate.getMonth() === 0;
+            const month = rollsIntoPreviousYear
+                ? 12 - season
+                : currentDate.getMonth() - season;
+            const year = rollsIntoPreviousYear
+                ? currentDate.getFullYear() - 1
+                : currentDate.getFullYear();
+
+            leaderboardUrl = buildLeaderboardUrl(month, year);
+            return fetchLeaderboard();
+        }
+
+        rankList.forEach((entry, index) => {
+            const isDuplicateName = lb.has(entry.playerName);
+            const name = isDuplicateName
+                ? `${entry.playerName}(${index + 1})`
+                : entry.playerName;
+
+            lb.set(name, {
+                id: `not_available${index}`,
+                name: name,
+                sp: entry.score,
+            });
+        });
+    } catch (error) {
+        console.error("Could not fetch the Marvel Snap leaderboard via public proxy:", error);
+    }
+}
+
+function hideLoading() {
+    const loadingIcon = document.getElementById("loading");
+    if (loadingIcon) {
+        loadingIcon.remove();
+    }
+}
+
+function createTextElement(text, tagName = "p") {
+    const element = document.createElement(tagName);
+    element.textContent = text;
+    return element;
+}
+
+function createIcon(src, title, alt) {
+    const icon = document.createElement("img");
+    icon.className = "icon";
+    icon.src = src;
+    icon.title = title;
+    icon.alt = alt;
+    return icon;
+}
+
+function removeIconOnError(icon) {
+    icon.onerror = () => {
+        const parent = icon.parentElement;
+        if (parent && parent.tagName === "A") {
+            parent.remove();
+        } else {
+            icon.remove();
+        }
+    };
+}
+
+function resolveRegion(alliance) {
+    const accountRegion = (alliance && alliance.account_region) || "";
+    if (accountRegion.includes("us-")) return "america";
+    if (accountRegion.includes("eu-")) return "europe";
+    if (accountRegion.includes("ap-")) return "oceania";
+    return "";
+}
+
+function isContentCreator(mediaEntry) {
+    return Boolean(mediaEntry && (mediaEntry.ttv !== undefined || mediaEntry.yt !== undefined));
+}
+
+function buildMediaLinks(player, mediaEntry) {
+    const links = document.createElement("span");
+
+    const addLink = (href, iconSrc, title, alt) => {
+        const link = document.createElement("a");
+        link.href = href;
+        link.title = title;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.appendChild(createIcon(iconSrc, title, alt));
+        links.appendChild(link);
+    };
+
+    if (mediaEntry.ttv !== undefined) {
+        addLink(`https://twitch.tv/${mediaEntry.ttv}`, "twitch-icon.png", `${player.name}'s Twitch Channel`, "Twitch");
+    }
+    if (mediaEntry.yt !== undefined) {
+        addLink(`https://youtube.com/@${mediaEntry.yt}`, "youtube-icon.png", `${player.name}'s Youtube Channel`, "YouTube");
+    }
+    if (mediaEntry.ut !== undefined) {
+        addLink(`https://snap.untapped.gg/en/profile/${mediaEntry.ut}/${mediaEntry.role_id}`, "untapped-icon.png", `${player.name}'s Untapped Profile`, "Untapped");
+    }
+    if (mediaEntry.gg2025 !== undefined) {
+        addLink("https://topdeck.gg/bracket/official-marvel-snap-tournament", "goldengauntlet2025.png", "2025 Golden Gauntlet Winner", "Golden Gauntlet 2025");
+    }
+    if (mediaEntry.ggII2025 !== undefined) {
+        addLink("https://topdeck.gg/bracket/marvel-snap-golden-gauntlet-ii", "goldengauntletII2025.png", "2025 Golden Gauntlet II Winner", "Golden Gauntlet II 2025");
+    }
+    if (mediaEntry.ggIII2025 !== undefined) {
+        addLink("https://topdeck.gg/bracket/marvel-snap-golden-gauntlet-world-championship", "goldengauntletIII2025.png", "2025 Golden Gauntlet World Championship Winner", "Golden Gauntlet World Championship 2025");
+    }
+
+    return links;
+}
+
+function buildAllianceBadge(alliance) {
+    const tag = (alliance.tag || "").toLowerCase();
+    if (!tag) return null;
+
+    const badge = createIcon(`${tag}.png`, alliance.alliance_name, alliance.alliance_name || "Alliance");
+    removeIconOnError(badge);
+
+    if (tag === "fak") {
+        const allianceLink = document.createElement("a");
+        allianceLink.href = "https://x.com/FAK_SNAP";
+        allianceLink.target = "_blank";
+        allianceLink.rel = "noopener";
+        allianceLink.appendChild(badge);
+        return allianceLink;
+    }
+
+    return badge;
+}
+
+function addDetailLink(details, href) {
+    const paragraph = document.createElement("p");
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = href;
+    paragraph.appendChild(link);
+    details.appendChild(paragraph);
+}
+
+function buildChartButton(player) {
+    const chartButton = document.createElement("button");
+    chartButton.textContent = 'Generate SP Chart';
+
+    chartButton.onclick = () => {
+        const details = document.getElementById("details");
+        details.style.visibility = 'hidden';
+
+        if (!chartData) {
+            console.warn("Chart data is not available for this player.");
             return;
         }
 
-        for (let i = 0; i < rankList.length; i++) {
-            if(lb.has(rankList[i].playerName)){
-                
-                lb.set(rankList[i].playerName + ("("+ (i + 1)+ ")"), {
-                id: "not_available" + (i),
-                name: rankList[i].playerName + ("("+ (i  +  1) + ")"),
-                sp: rankList[i].score,
-            });
-            }else{
-                lb.set(rankList[i].playerName, {
-                    id: "not_available" + (i),
-                    name: rankList[i].playerName,
-                    sp: rankList[i].score,
-                });
+        const dataPoints = [];
+        const labels = [];
+        for (const datetime in chartData) {
+            const snapshot = chartData[datetime];
+            if (snapshot && snapshot[player.name] !== undefined) {
+                dataPoints.push(snapshot[player.name]);
+                const dateObject = new Date(parseInt(datetime, 10));
+                labels.push(`${dateObject.toLocaleDateString()} ${dateObject.toLocaleTimeString()}`);
             }
-            
         }
-        
-        document.getElementsByTagName("body")[0].removeChild(loading_icon);
-        buildTable();
 
-      //console.log(data);
-  
-    } catch (error) {
-      console.error("Could not fetch the Marvel Snap leaderboard via public proxy:", error);
-    }
+        document.querySelectorAll(".chart_container").forEach((node) => node.remove());
 
-    
-  }
+        const chartContainer = document.createElement("div");
+        chartContainer.className = "chart_container";
 
-  
+        const chartElement = document.createElement("canvas");
+        chartElement.className = "chart_";
+        chartElement.id = 'chart';
+        chartContainer.appendChild(chartElement);
 
-async function fetchData() {
+        const closeChartButton = document.createElement("button");
+        closeChartButton.textContent = 'Close';
+        closeChartButton.onclick = () => chartContainer.remove();
+        chartContainer.appendChild(closeChartButton);
 
-    /*try {
-        const response = await fetch(url, {
-            body: JSON.stringify(requestData),
+        document.body.appendChild(chartContainer);
+
+        if (dataPoints.length === 0) {
+            chartElement.remove();
+            chartContainer.appendChild(createTextElement("No chart data recorded for this player yet."));
+            return;
+        }
+
+        const chart = new Chart(chartElement, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    fill: {
+                        target: 'origin',
+                        above: 'rgb(31, 31, 117)',
+                        below: 'rgb(10,10,50)'
+                    },
+                    pointStyle: false,
+                    borderJoinStyle: "round",
+                    label: `${player.name}'s SP`,
+                    data: dataPoints,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {}
+                }
+            }
         });
 
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
+        const chartSlider = document.createElement("input");
+        chartSlider.className = "slider";
+        chartSlider.type = 'range';
+        chartSlider.min = 0;
+        chartSlider.max = Math.max(0, dataPoints.length - 10);
+        chartSlider.value = 0;
+        chartSlider.oninput = () => {
+            const startIndex = Number(chartSlider.value);
+            chart.data.datasets[0].data = dataPoints.slice(startIndex);
+            chart.data.labels = labels.slice(startIndex);
+            chart.update();
+        };
+        chartContainer.appendChild(chartSlider);
+    };
 
-        console.log(response);
-    } catch (error) {
-        console.error("Error:", error);
-    }*/
-
-    /*for(var k = 0;k < pids.length;k++){
-        //requestData.process_id = pids[k];
-        
-        try {
-        const response = await fetch(url, {
-            method: "POST",
-            body: JSON.stringify(requestData),
-            headers: headers
-        });
-    
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-    
-        const data = await response.json();
-        const rankList = data.data.at_data_source_output.value.data;
-        
-    
-        for (let i = 0; i < rankList.length; i++) {
-            lb.set(rankList[i].open_id, {
-            name: rankList[i].indicator_0,
-            sp: rankList[i].score1,
-            server: rankList[i].server_id,
-            id: rankList[i].open_id,
-            role_id: rankList[i].role_id,
-            timestamp: rankList[i].score2
-            });
-
-            /*switch(rankList[i].server_id){
-                case "1005":
-                    region = "europe";
-                    eu_lb.set(rankList[i].open_id, {
-                    name: rankList[i].indicator_0,
-                    sp: rankList[i].score1,
-                    server: rankList[i].server_id,
-                    id: rankList[i].open_id,
-                    role_id: rankList[i].role_id,
-                    timestamp: rankList[i].score2
-                    });
-                break;
-    
-                case "1006":
-                    region = "europe"; // ?
-                    eu_lb.set(rankList[i].open_id, {
-                    name: rankList[i].indicator_0,
-                    sp: rankList[i].score1,
-                    server: rankList[i].server_id,
-                    id: rankList[i].open_id,
-                    role_id: rankList[i].role_id,
-                    timestamp: rankList[i].score2
-                    });
-                break;
-    
-                case "1004":
-                    region = "oceania"; // ?
-                    oc_lb.set(rankList[i].open_id, {
-                    name: rankList[i].indicator_0,
-                    sp: rankList[i].score1,
-                    server: rankList[i].server_id,
-                    id: rankList[i].open_id,
-                    role_id: rankList[i].role_id,
-                    timestamp: rankList[i].score2
-                    });
-                break;
-    
-                case "1002":
-                    na_lb.set(rankList[i].open_id, {
-                    name: rankList[i].indicator_0,
-                    sp: rankList[i].score1,
-                    server: rankList[i].server_id,
-                    id: rankList[i].open_id,
-                    role_id: rankList[i].role_id,
-                    timestamp: rankList[i].score2
-                    });
-                break;
-    
-                case "1003":
-                    oc_lb.set(rankList[i].open_id, {
-                    name: rankList[i].indicator_0,
-                    sp: rankList[i].score1,
-                    server: rankList[i].server_id,
-                    id: rankList[i].open_id,
-                    role_id: rankList[i].role_id,
-                    timestamp: rankList[i].score2
-                    });
-                break;
-    
-                case "1001":
-                    na_lb.set(rankList[i].open_id, {
-                    name: rankList[i].indicator_0,
-                    sp: rankList[i].score1,
-                    server: rankList[i].server_id,
-                    id: rankList[i].open_id,
-                    role_id: rankList[i].role_id,
-                    timestamp: rankList[i].score2
-                    });
-                break;
-            }*/
-            
-            //console.log(`Name: ${rankList[i].indicator_0}, Rank: ${i + 1} ID:${rankList[i].open_id}, RoleID: ${rankList[i].role_id}`);
-/*
-        }
-
-        
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    /*}
-    */
-    document.getElementsByTagName("body")[0].removeChild(loading_icon);
-    buildTable();
+    return chartButton;
 }
 
-function downloadMapObject(mapObj, fileName) {
-    // Convert the map object to a JSON string
-    const mapJson = JSON.stringify(mapObj);
-  
-    // Create a hidden anchor element
-    const link = document.createElement('a');
-    link.href = `data:text/json;charset=utf-8,${encodeURIComponent(mapJson)}`;
-    link.download = fileName || 'map.json';
-  
-    // Trigger a click event to initiate the download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
+function populateDetails(details, player, playerId, mediaEntry, alliance, rank, event) {
+    details.innerHTML = "";
 
-function buildTable(){
-    
+    details.appendChild(createTextElement(`Name: ${player.name.replaceAll("%20", " ")}`));
+    details.appendChild(createTextElement(`Rank: ${rank}`));
+    details.appendChild(createTextElement(`Snap Points: ${player.sp}`));
+    details.appendChild(createTextElement(`ID: ${playerId}`));
+
+    if (mediaEntry) {
+        details.appendChild(createTextElement("Media Links:"));
+
+        if (mediaEntry.ttv) {
+            addDetailLink(details, `https://twitch.tv/${mediaEntry.ttv}`);
+        }
+        if (mediaEntry.yt) {
+            addDetailLink(details, `https://youtube.com/@${mediaEntry.yt}`);
+        }
+        if (mediaEntry.ut && mediaEntry.role_id) {
+            addDetailLink(details, `https://snap.untapped.gg/en/profile/${mediaEntry.ut}/${mediaEntry.role_id}`);
+        }
+    }
+
+    if (alliance) {
+        details.appendChild(createTextElement(`Server: ${alliance.account_region}`));
+        details.appendChild(createTextElement(`Approximate Collection Score: ${alliance.collection_score}`));
+        details.appendChild(createTextElement(`Alliance Tag: ${alliance.tag}`));
+        details.appendChild(createTextElement(`Alliance Name: ${alliance.alliance_name}`));
+    }
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = 'Close';
+    closeButton.onclick = () => {
+        details.style.visibility = 'hidden';
+    };
+    details.appendChild(closeButton);
+
+    details.appendChild(buildChartButton(player));
+
+    details.style.left = `${event.pageX}px`;
+    details.style.top = `${event.pageY}px`;
+    details.style.visibility = 'visible';
+}
+
+function buildTable() {
     const table = document.createElement('table');
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
+    const rowRecords = [];
 
     const headerRow = document.createElement('tr');
     const thName = document.createElement('th');
@@ -391,597 +357,186 @@ function buildTable(){
     thRank.textContent = "Rank";
     const thPoints = document.createElement('th');
     thPoints.textContent = "Snap Points";
-    //const thRegion = document.createElement('th');
-    //thRegion.textContent = "Region";
-    headerRow.appendChild(thName);
-    headerRow.appendChild(thRank);
-    headerRow.appendChild(thPoints);
-    //headerRow.appendChild(thRegion);
+    headerRow.append(thName, thRank, thPoints);
     thead.appendChild(headerRow);
 
-    const toggleButton = document.createElement('button');
-    toggleButton.textContent = "Show Only Content Creators";
-    let showOnlyLinks = false;
+    const creatorToggle = document.createElement('button');
+    creatorToggle.textContent = "Show Only Content Creators";
 
-    const imageToggleButton = document.createElement('button');
-    const regions = ["America", "Europe", "Oceania", "Global"];
-    let currentRegionIndex = 3;
+    const regionToggle = document.createElement('button');
+    regionToggle.textContent = `Show Region: ${REGIONS[GLOBAL_REGION_INDEX]}`;
 
-    const previousSeasonLink = document.createElement('a')
+    const previousSeasonLink = document.createElement('a');
     const previousSeasonButton = document.createElement('button');
     previousSeasonLink.appendChild(previousSeasonButton);
-    if(allArguments.season == 0){
-        if(rl){
-            previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=1";
+
+    if (season === 0) {
+        if (!usedMonthRolloverRetry) {
+            previousSeasonLink.href = "?season=1";
             previousSeasonButton.textContent = "View Previous Season";
-        }else{
-            previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=2";
+        } else {
+            previousSeasonLink.href = "?season=2";
             previousSeasonButton.textContent = "View Current Season";
         }
-    }else{
-        previousSeasonLink.href = "https://jaydenscottl.github.io/bettersnaplb/public/index.html?season=0";
+    } else {
+        previousSeasonLink.href = "?season=0";
         previousSeasonButton.textContent = "View Current Season";
     }
-
-    toggleButton.onclick = function() {
-        showOnlyLinks = !showOnlyLinks;
-        currentRegionIndex = 3;
-        imageToggleButton.textContent = `Show Region: ${regions[currentRegionIndex]}`;
-
-        if(showOnlyLinks){
-            toggleButton.textContent = "Show All Players";
-        }else{   
-            toggleButton.textContent = "Show Only Content Creators";
-        }
-
-        const rows = tbody.getElementsByTagName('tr');
-        for (let row of rows) {
-            const nameCell = row.getElementsByTagName('td')[0];
-            if (showOnlyLinks && !nameCell.querySelector('a')) {
-                row.style.display = 'none';
-            } else if(showOnlyLinks){
-                
-                if(!(nameCell.innerHTML.includes("https://youtube.com") || nameCell.innerHTML.includes("https://twitch.tv"))){
-                    row.style.display = 'none';
-                }else{             
-                    row.style.display = '';
-                }
-            }else{
-                row.style.display = '';
-            }
-        }
-    };
-    
-    imageToggleButton.textContent = `Show Region: ${regions[currentRegionIndex]}`;
-    
-    imageToggleButton.onclick = function() {
-
-        toggleButton.textContent = "Show Only Content Creators";
-        showOnlyLinks = false;
-
-        currentRegionIndex = (currentRegionIndex + 1) % regions.length;
-        imageToggleButton.textContent = `Show Region: ${regions[currentRegionIndex]}`;
-        
-        const rows = tbody.getElementsByTagName('tr');
-        for (let row of rows) {
-            const nameCell = row.getElementsByTagName('td')[0];
-            const img = nameCell.querySelector(`img[title="${regions[currentRegionIndex].toLowerCase()}"]`);
-            if (currentRegionIndex < 3 && !img) {
-                row.style.display = 'none';
-                
-            } else {
-                row.style.display = '';
-            }
-        }
-
-        //console.log("Number of top 1k players in " + regions[currentRegionIndex] + " region:", Array.from(tbody.getElementsByTagName('tr')).filter(row => row.style.display !== 'none').length);
-    };
 
     const searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.placeholder = 'Search by Name';
 
-    searchInput.addEventListener('input', function() {
+    const filterState = {
+        creatorsOnly: false,
+        regionIndex: GLOBAL_REGION_INDEX,
+        query: ""
+    };
 
-        toggleButton.textContent = "Show Only Content Creators";
-        showOnlyLinks = false;
-        currentRegionIndex = 3;
-        imageToggleButton.textContent = `Show Region: ${regions[currentRegionIndex]}`;
+    const applyFilters = () => {
+        const query = filterState.query.trim().toLowerCase();
+        const regionName = REGIONS[filterState.regionIndex].toLowerCase();
+        const regionFilterActive = filterState.regionIndex !== GLOBAL_REGION_INDEX;
 
+        for (const record of rowRecords) {
+            const isVisible =
+                (!filterState.creatorsOnly || record.isCreator) &&
+                (!regionFilterActive || record.region === regionName) &&
+                (query === "" || record.searchText.toLowerCase().includes(query));
 
-        const filter = searchInput.value.toLowerCase();
-        const rows = tbody.getElementsByTagName('tr');
-        for (let row of rows) {
-            const nameCell = row.getElementsByTagName('td')[0];
-            if (nameCell) {
-                const nameText = nameCell.textContent || nameCell.innerText;
-                row.style.display = nameText.toLowerCase().includes(filter) ? '' : 'none';
+            const display = isVisible ? '' : 'none';
+            if (record.row.style.display !== display) {
+                record.row.style.display = display;
             }
         }
+    };
+
+    creatorToggle.onclick = () => {
+        filterState.creatorsOnly = !filterState.creatorsOnly;
+        creatorToggle.textContent = filterState.creatorsOnly
+            ? "Show All Players"
+            : "Show Only Content Creators";
+        applyFilters();
+    };
+
+    regionToggle.onclick = () => {
+        filterState.regionIndex = (filterState.regionIndex + 1) % REGIONS.length;
+        regionToggle.textContent = `Show Region: ${REGIONS[filterState.regionIndex]}`;
+        applyFilters();
+    };
+
+    searchInput.addEventListener('input', () => {
+        filterState.query = searchInput.value;
+        applyFilters();
     });
 
     thName.appendChild(searchInput);
-    
-    thName.appendChild(imageToggleButton);
-
-    thName.appendChild(toggleButton);
-
+    thName.appendChild(regionToggle);
+    thName.appendChild(creatorToggle);
     thName.appendChild(previousSeasonLink);
 
-    
-    const sortedByKey = new Map([...lb.entries()].sort((a, b) => b[1].sp - a[1].sp));
-    
-    
-    /*table.onclick = function(){
-        console.log(Array.from(lb));
-        downloadMapObject(Array.from(lb),"output.txt");
-    }*/
+    const sortedPlayers = [...lb.values()].sort((a, b) => b.sp - a.sp);
 
-    createTable(sortedByKey,tbody);
-    
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-
-  
-    document.getElementsByTagName("body")[0].appendChild(table);
-
-    
-}
-
-function createTable(sortedByKey,tbody){
-
-    if(sortedByKey.size == 0){
-        const apiErrorImage = document.createElement("img");
-        apiErrorImage.position = "relative";
-        apiErrorImage.src = "ApiError.png";
-        apiErrorImage.title = "Empty array received.";
-        apiErrorImage.style.width = "80%";
-        apiErrorImage.style.height = "80%";
-        apiErrorImage.style.paddingLeft = "5px";
-        apiErrorImage.style.paddingTop = "15px";
-        tbody.appendChild(apiErrorImage);
-        return;
-    }
-    while (tbody.firstChild) {
-        tbody.removeChild(tbody.lastChild);
+    if (sortedPlayers.length === 0) {
+        const noticeRow = document.createElement('tr');
+        const noticeCell = document.createElement('td');
+        noticeCell.colSpan = 3;
+        noticeCell.className = 'empty_notice';
+        noticeCell.textContent = "No leaderboard data available right now. Please try again later.";
+        noticeRow.appendChild(noticeCell);
+        tbody.appendChild(noticeRow);
     }
 
-    var rank = 1;
-
-    sortedByKey.forEach((value, key) =>{
-
-        if(rank > 1001){
-            //return;
-        }
-
-        if(alliances.has(value.name)){
-            value.id = alliances.get(value.name).id;
-            //console.log(value.id);
-        }
+    let rank = 1;
+    for (const player of sortedPlayers) {
+        const alliance = alliances.get(player.name) ?? null;
+        const playerId = alliance ? alliance.id : player.id;
+        const mediaEntry = media.get(playerId) ?? null;
+        const region = resolveRegion(alliance);
 
         const row = document.createElement('tr');
         const tdName = document.createElement('td');
-        const tdNameSpan = document.createElement('span');
-        tdNameSpan.id = 'name_span';
-        let tempName = value.name.replace("%20"," ")
-        if(value.name.length > 20){
-            tempName = "[Missing]"
-        }
-        tdNameSpan.textContent = tempName;
-        tdName.appendChild(tdNameSpan);
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'name_span';
 
-        var tempRank = rank;
-        
-        tdName.addEventListener('click',(event) => {
-            
-            var details = document.getElementById("details");
-            
-            if(details.style.visibility === "visible"){
+        const searchText = player.name.length > MAX_TRUSTED_NAME_LENGTH
+            ? "[Missing]"
+            : player.name.replaceAll("%20", " ");
+        nameSpan.textContent = searchText;
+        tdName.appendChild(nameSpan);
+
+        const rowRank = rank;
+        tdName.addEventListener('click', (event) => {
+            const details = document.getElementById("details");
+
+            if (details.style.visibility === "visible") {
                 details.style.visibility = "hidden";
                 return;
             }
 
-            if (!(event.target === tdName)) {
+            if (event.target !== tdName) {
                 return;
             }
-            
-            details.innerHTML = ""; 
 
-            const nameElement = document.createElement('p');
-            nameElement.textContent = "Name: " + value.name.replace("%20"," ");
-            details.appendChild(nameElement);
-
-            const rankElement = document.createElement('p');
-            rankElement.textContent = "Rank: " + tempRank;
-            details.appendChild(rankElement);
-
-            const pointsElement = document.createElement('p');
-            pointsElement.textContent = "Snap Points: " + value.sp;
-            details.appendChild(pointsElement);
-
-            const serverIdElement = document.createElement('p');
-            serverIdElement.textContent = "ID: " + value.id; 
-            details.appendChild(serverIdElement);
-
-            //console.log(value.id);
-            if (media.has(value.id)) {
-                //console.log(value.id);
-                const mediaElement = document.createElement('p');
-                mediaElement.textContent = "Media Links:";
-                details.appendChild(mediaElement);
-                
-                const mediaLinks = media.get(value.id);
-                if (mediaLinks.ttv) {
-                    const ttvLinkP = document.createElement('p');
-                    const ttvLink = document.createElement('a');
-                    ttvLink.href = "https://twitch.tv/" + mediaLinks.ttv;
-                    ttvLink.textContent = "https://twitch.tv/" + mediaLinks.ttv;
-                    ttvLinkP.appendChild(ttvLink);
-                    details.appendChild(ttvLinkP);
-                }
-                if (mediaLinks.yt) {
-                    const ytLinkP = document.createElement('p');
-                    const ytLink = document.createElement('a');
-                    ytLink.href = "https://youtube.com/@" + mediaLinks.yt;
-                    ytLink.textContent = "https://youtube.com/@" + mediaLinks.yt;
-                    ytLinkP.appendChild(ytLink);
-                    details.appendChild(ytLinkP);
-                }
-
-                if (mediaLinks.ut && mediaLinks.role_id) {
-                    const utLinkP = document.createElement('p');
-                    const utLink = document.createElement('a');
-                    utLink.href = "https://snap.untapped.gg/en/profile/" + mediaLinks.ut + "/" + mediaLinks.role_id;
-                    utLink.textContent = "https://snap.untapped.gg/en/profile/" + mediaLinks.ut + "/" + mediaLinks.role_id;
-                    utLinkP.appendChild(utLink);
-                    details.appendChild(utLinkP);
-                }
-            }
-
-            if(alliances.has(value.name)){
-                const accountRegionElement = document.createElement('p');
-                accountRegionElement.textContent = "Server: " + alliances.get(value.name).account_region; 
-                details.appendChild(accountRegionElement);
-
-                const approxCollectionScoreElement = document.createElement('p');
-                approxCollectionScoreElement.textContent = "Approximate Collection Score: " + alliances.get(value.name).collection_score; 
-                details.appendChild(approxCollectionScoreElement);
-
-                const allianceTagElement = document.createElement('p');
-                allianceTagElement.textContent = "Alliance Tag: " + alliances.get(value.name).tag; 
-                details.appendChild(allianceTagElement);
-
-                const allianceNameElement = document.createElement('p');
-                allianceNameElement.textContent = "Alliance Name: " + alliances.get(value.name).alliance_name; 
-                details.appendChild(allianceNameElement);
-            }
-
-            
-
-            
-
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'Close';
-            closeButton.onclick = function() {
-                details.style.visibility = 'hidden'; 
-            };
-            details.appendChild(closeButton);
-
-            details.style.left = event.pageX + 'px';
-            details.style.top = event.pageY + 'px';
-            details.style.visibility = 'visible'; 
-
-            const chartGenButton = document.createElement('button');
-            chartGenButton.textContent = 'Generate SP Chart';
-            chartGenButton.onclick = function() {
-                details.style.visibility = 'hidden'; 
-                const chartElement = document.createElement('canvas');
-                chartElement.className = "chart_";
-                chartElement.id = 'chart';
-                
-
-                const chartContainer = document.createElement('div');
-                chartContainer.className = "chart_container";
-                document.getElementsByTagName("body")[0].appendChild(chartContainer);
-                chartContainer.appendChild(chartElement);
-
-                const closeChartButton = document.createElement('button');
-                closeChartButton.textContent = 'Close';
-                closeChartButton.margin = "0 !important";
-                closeChartButton.padding = "0 !important";
-                closeChartButton.onclick = function() {
-                    details.style.visibility = 'hidden'; 
-                    chartContainer.removeChild(closeChartButton);
-                    document.getElementsByTagName("body")[0].removeChild(chartContainer);
-                    
-                };
-                chartContainer.appendChild(closeChartButton);
-
-                
-                
-
-                var data_ = [];
-                var labels = [];
-
-                
-
-                for(const datetime in chartData){
-                    if(chartData[datetime][value.name] !== undefined ){
-                        data_.push(chartData[datetime][value.name]);
-                        const dateObject = new Date(parseInt(datetime));
-                        labels.push(dateObject.toLocaleDateString() + " " + dateObject.toLocaleTimeString());
-                    }
-                }
-
-                
-
-                var chart_ =new Chart(chartElement, {
-                    type: 'line', // or 'line', 'pie', etc.
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            fill: {
-                                target: 'origin',
-                                above: 'rgb(31, 31, 117)',   // Area will be red above the origin
-                                below: 'rgb(10,10,50)'    // And blue below the origin
-                              },
-                              pointStyle:false,
-                              borderJoinStyle:"round",
-                            label: value.name + "'s SP",
-                            data: data_,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        
-                        scales: {
-                            y: {
-                                
-                                
-                            }
-                        }
-                    }
-                });
-
-                var chartSlider = document.createElement('input');
-                chartSlider.className = "slider";
-                chartSlider.type = 'range';
-                chartSlider.min = 0;
-                chartSlider.max = data_.length-10;
-                chartSlider.value = 0;
-                chartSlider.oninput = function() {
-                    chart_.data.datasets[0].data = data_.slice(chartSlider.value, data_.length);
-                    chart_.data.labels = labels.slice(chartSlider.value, labels.length);
-                    chart_.update();
-                };
-                chartContainer.appendChild(chartSlider);
-                    
-            };
-
-            
-            
-            details.appendChild(chartGenButton);
+            populateDetails(details, player, playerId, mediaEntry, alliance, rowRank, event);
         });
 
         const tdRank = document.createElement('td');
-        tdRank.textContent = rank;
-        value.rank = rank.toString();
+        tdRank.textContent = rowRank;
 
-        if(rank > 1000){
-            const qm = document.createElement("img");
-            qm.src = "question-icon.png";
-            qm.title = "Rank beyond 1000 is only based on available data and may not be accurate.";
-            tdRank.appendChild(qm);
-
+        if (rowRank > UNVERIFIED_RANK_THRESHOLD) {
+            const questionIcon = createIcon(
+                "question-icon.png",
+                "Rank beyond 1000 is only based on available data and may not be accurate.",
+                ""
+            );
+            tdRank.appendChild(questionIcon);
         }
 
         const tdPoints = document.createElement('td');
-        tdPoints.textContent = value.sp;
-        const id = document.createElement('td');
-        id.textContent = value.id;
+        tdPoints.textContent = player.sp;
 
-        row.appendChild(tdName);
-        row.appendChild(tdRank);
-        row.appendChild(tdPoints);
-
-        var region = "";
-
-        if(alliances.has(value.name)){
-            if(alliances.get(value.name).account_region.includes("us-")){
-                region = "america";
-            }else if(alliances.get(value.name).account_region.includes("eu-")){
-                region = "europe";
-            }else if(alliances.get(value.name).account_region.includes("ap-")){
-                region = "oceania";
-            }
-
-            const region_ico = document.createElement("img");
-            region_ico.src = region + "-flag.png";
-            region_ico.id = "icon";
-            region_ico.title = region;
-
-            
-
-            tdName.appendChild(region_ico);
+        if (region) {
+            tdName.appendChild(createIcon(`${region}-flag.png`, region, `${region} region`));
         }
 
-        /*switch(value.server){
-            case "1005":
-                region = "europe";
-            break;
-
-            case "1006":
-                region = "europe"; // ?
-            break;
-
-            case "1004":
-                region = "oceania"; // ?
-            break;
-
-            case "1002":
-                region = "america";
-            break;
-
-            case "1003":
-                region = "oceania";
-            break;
-
-            case "1001":
-                region = "america";
-            break;
-        }*/
-
-        /**const region_ico = document.createElement("img");
-        region_ico.src = region + "-flag.png";
-        region_ico.id = "icon";
-        region_ico.title = region;
-
-        tdName.appendChild(region_ico);**/
-
-        //const tdRegion = document.createElement("td");
-        //tdRegion.textContent = region;
-        //row.appendChild(tdRegion);
-
-        
-        
-        if(media.has(value.id)){
-            const links = document.createElement("span");
-
-            if(media.get(value.id).ttv !== undefined){
-                
-                const ttv = document.createElement("a");
-                const ttv_ico = document.createElement("img");
-                ttv_ico.id = "icon";
-                ttv_ico.src = "twitch-icon.png";
-                ttv.target = "blank_";
-                ttv.title = value.name + "'s Twitch Channel";
-                ttv.appendChild(ttv_ico);
-                ttv.href = "https://twitch.tv/" + media.get(value.id).ttv;
-                
-                links.appendChild(ttv);
+        if (mediaEntry) {
+            const links = buildMediaLinks(player, mediaEntry);
+            if (links.children.length > 0) {
+                tdName.appendChild(links);
             }
-
-            if(media.get(value.id).yt !== undefined){
-                const yt = document.createElement("a");
-                const yt_ico = document.createElement("img");
-                yt_ico.id = "icon";
-                yt_ico.src = "youtube-icon.png";
-                yt.target = "blank_";
-                yt.title = value.name + "'s Youtube Channel";
-                yt.appendChild(yt_ico);
-                yt.href = "https://youtube.com/@" + media.get(value.id).yt;
-                
-                links.appendChild(yt);
-            }
-
-            if(media.get(value.id).ut !== undefined){
-                const ut = document.createElement("a");
-                const ut_ico = document.createElement("img");
-                ut_ico.id = "icon";
-                ut_ico.src = "untapped-icon.png";
-                ut.target = "blank_";
-                ut.title = value.name + "'s Untapped Profile";
-                ut.appendChild(ut_ico);
-                ut.href = "https://snap.untapped.gg/en/profile/" + media.get(value.id).ut + "/" + media.get(value.id).role_id;
-                
-                links.appendChild(ut);
-            } 
-            
-            if(media.get(value.id).gg2025 !== undefined){
-                const gg2025 = document.createElement("a");
-                const gg2025_ico = document.createElement("img");
-                gg2025_ico.id = "icon";
-                gg2025_ico.src = "goldengauntlet2025.png";
-                gg2025.target = "blank_";
-                gg2025.title = "2025 Golden Gauntlet Winner";
-                gg2025.appendChild(gg2025_ico);
-                gg2025.href = "https://topdeck.gg/bracket/official-marvel-snap-tournament";
-                links.appendChild(gg2025);
-            }
-
-            if(media.get(value.id).ggII2025 !== undefined){
-                const gg2025 = document.createElement("a");
-                const gg2025_ico = document.createElement("img");
-                gg2025_ico.id = "icon";
-                gg2025_ico.src = "goldengauntletII2025.png";
-                gg2025.target = "blank_";
-                gg2025.title = "2025 Golden Gauntlet II Winner";
-                gg2025.appendChild(gg2025_ico);
-                gg2025.href = "https://topdeck.gg/bracket/marvel-snap-golden-gauntlet-ii";
-                links.appendChild(gg2025);
-            }
-
-            if(media.get(value.id).ggIII2025 !== undefined){
-                const gg2025 = document.createElement("a");
-                const gg2025_ico = document.createElement("img");
-                gg2025_ico.id = "icon";
-                gg2025_ico.src = "goldengauntletIII2025.png";
-                gg2025.target = "blank_";
-                gg2025.title = "2025 Golden Gauntlet World Championship Winner";
-                gg2025.appendChild(gg2025_ico);
-                gg2025.href = "https://topdeck.gg/bracket/marvel-snap-golden-gauntlet-world-championship";
-                links.appendChild(gg2025);
-            }
-
-            tdName.appendChild(links);
-
-
         }
 
-        if(alliances.has(value.name)){
-            if(alliances.get(value.name).tag.toLowerCase() === "fak"){
-                const allianceLink = document.createElement("a");
-                const alliance = document.createElement("img");
-                alliance.src = alliances.get(value.name).tag.toLowerCase() + ".png";
-                alliance.id = "icon";
-                alliance.title = alliances.get(value.name).alliance_name;
-                allianceLink.href = "https://x.com/FAK_SNAP";
-                allianceLink.target = "_blank";
-                allianceLink.appendChild(alliance);
-                tdName.appendChild(allianceLink);
-
-                const accountRegionElement = document.createElement('p');
-                accountRegionElement.textContent = "Server: " + alliances.get(value.name).account_region; 
-                details.appendChild(accountRegionElement);
-            }else{
-                const alliance = document.createElement("img");
-                alliance.src = alliances.get(value.name).tag.toLowerCase() + ".png";
-                alliance.id = "icon";
-                alliance.title = alliances.get(value.name).alliance_name;
-                tdName.appendChild(alliance);
-
-                const accountRegionElement = document.createElement('p');
-                accountRegionElement.textContent = "Server: " + alliances.get(value.name).account_region; 
-                details.appendChild(accountRegionElement);
-            }
-
-            
+        const allianceBadge = alliance ? buildAllianceBadge(alliance) : null;
+        if (allianceBadge) {
+            tdName.appendChild(allianceBadge);
         }
 
-        /*if(season_data.get(value.id) !== undefined){
-            //const ps = document.createElement("span");
-            //ps.className = "rankSpan";
-            //ps.title = "Previous Season";
-            const psImg = document.createElement("img");
-            psImg.src = "previous_season.png";
-            //ps.appendChild(psImg);
-            console.log(season_data.get(value.id));
-            psImg.textContent = season_data.get(value.id).rank;
-            tdName.appendChild(psImg);
-        }*/
-
+        row.append(tdName, tdRank, tdPoints);
         tbody.appendChild(row);
 
+        rowRecords.push({
+            row: row,
+            searchText: searchText,
+            isCreator: isContentCreator(mediaEntry),
+            region: region
+        });
+
         rank++;
-    });
+    }
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    document.body.appendChild(table);
 }
-async function fetchData(){
+
+async function fetchData() {
     fetchChartData();
-    await fetchAlliances();
-    await fetchMedia();
-    await fetchPatches();
-    await fetchViaProxy();
+
+    await Promise.all([fetchAlliances(), fetchMedia(), fetchLeaderboard()]);
+
+    hideLoading();
+    buildTable();
 }
 
 fetchData();
